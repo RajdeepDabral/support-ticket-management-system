@@ -1,6 +1,9 @@
 spring:
   application:
     name: support-ticket-backend
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/support_ticket}
     username: ${SPRING_DATASOURCE_USERNAME:support}

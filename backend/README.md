@@ -8,8 +8,9 @@ Spring Boot backend for the Support Ticket Management System.
 **Phase 2 — Database and Persistence** complete.
 **Ticket Domain and Business Service** complete.
 **Ticket State Machine** complete.
+**REST API Foundation — Create Ticket** complete (`POST /api/v1/tickets`).
 
-REST APIs, comments, search, and frontend are not implemented yet.
+List, get, update, status transition, comments, search, and frontend are not implemented yet.
 
 ## Technology
 
@@ -72,7 +73,7 @@ com.supportticket
 ├── mapper          # TicketMapper
 ├── exception       # TicketNotFoundException, InvalidRequestException, InvalidStatusTransitionException
 ├── config
-├── controller
+├── controller      # TicketController (POST /api/v1/tickets)
 ├── dto
 ├── exception
 └── mapper
