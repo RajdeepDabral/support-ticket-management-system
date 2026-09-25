@@ -374,6 +374,58 @@ body {
   margin: 0;
 }
 
+.ticket-status-actions {
+  margin-top: 1.5rem;
+  max-width: 40rem;
+}
+
+.ticket-status-actions h3 {
+  margin: 0 0 0.75rem;
+}
+
+.ticket-status-current {
+  margin: 0 0 0.75rem;
+}
+
+.ticket-status-transition-loading,
+.ticket-status-no-actions {
+  margin: 0 0 0.75rem;
+  color: #6b6b73;
+}
+
+.ticket-status-transition-error {
+  margin-bottom: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid #f0c2c2;
+  border-radius: 0.5rem;
+  background: #fff7f7;
+}
+
+.ticket-status-transition-error p {
+  margin: 0;
+}
+
+.ticket-status-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.ticket-status-action-buttons button {
+  padding: 0.5rem 0.85rem;
+  border: 1px solid #1a4fd6;
+  border-radius: 0.35rem;
+  background: #1a4fd6;
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ticket-status-action-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .tickets-page-header {
   display: flex;
   flex-wrap: wrap;

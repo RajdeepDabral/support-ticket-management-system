@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { addComment, getTicket, updateTicket } from '../api/tickets';
+import { addComment, getTicket, transitionTicketStatus, updateTicket } from '../api/tickets';
 import { ApiError } from '../types/api';
 import type { Ticket, TicketDetail } from '../types/ticket';
 import { TicketDetailsPage } from './TicketDetailsPage';
@@ -13,12 +13,14 @@ vi.mock('../api/tickets', async (importOriginal) => {
     getTicket: vi.fn(),
     updateTicket: vi.fn(),
     addComment: vi.fn(),
+    transitionTicketStatus: vi.fn(),
   };
 });
 
 const mockGetTicket = vi.mocked(getTicket);
 const mockUpdateTicket = vi.mocked(updateTicket);
 const mockAddComment = vi.mocked(addComment);
+const mockTransitionTicketStatus = vi.mocked(transitionTicketStatus);
 
 const baseTicket: TicketDetail = {
   id: 42,
@@ -53,6 +55,7 @@ describe('TicketDetailsPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetTicket.mockResolvedValue(baseTicket);
+    vi.stubGlobal('confirm', vi.fn(() => true));
   });
 
   it('loads and displays ticket details', async () => {
@@ -65,7 +68,7 @@ describe('TicketDetailsPage', () => {
     expect(screen.getByText('Unable to login')).toBeInTheDocument();
     expect(screen.getByText('User cannot login to the application.')).toBeInTheDocument();
     expect(screen.getByText('HIGH')).toBeInTheDocument();
-    expect(screen.getByText('OPEN')).toBeInTheDocument();
+    expect(screen.getAllByText('OPEN').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('john.doe')).toBeInTheDocument();
   });
 
@@ -163,8 +166,8 @@ describe('TicketDetailsPage', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Edit Ticket' }));
 
-    expect(screen.queryByLabelText(/Status/i)).not.toBeInTheDocument();
-    expect(screen.queryByRole('combobox', { name: /Status/i })).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/^Status$/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole('combobox', { name: /^Status$/i })).not.toBeInTheDocument();
 
     const statusLabel = screen.getByText('Status');
     const statusItem = statusLabel.closest('.ticket-details-meta-item');
@@ -394,6 +397,49 @@ describe('TicketDetailsPage', () => {
 
     await waitForTicketToLoad();
     expect(mockGetTicket).toHaveBeenCalledTimes(2);
+  });
+
+  it('displays status transition actions on the ticket details page', async () => {
+    renderTicketDetailsPage();
+    await waitForTicketToLoad();
+
+    expect(screen.getByRole('heading', { name: 'Status Actions' })).toBeInTheDocument();
+    expect(screen.getByText(/Current status:/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start Progress' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Cancel Ticket' })).toBeInTheDocument();
+  });
+
+  it('updates displayed status after a successful transition', async () => {
+    mockTransitionTicketStatus.mockResolvedValue({
+      ...baseTicket,
+      status: 'IN_PROGRESS',
+      updatedAt: '2026-09-25T09:00:00Z',
+    });
+
+    renderTicketDetailsPage();
+    await waitForTicketToLoad();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Start Progress' }));
+
+    await waitFor(() => {
+      const statusSection = screen.getByRole('heading', { name: 'Status Actions' }).closest('section');
+      expect(statusSection).not.toBeNull();
+      expect(within(statusSection as HTMLElement).getByText('IN_PROGRESS')).toBeInTheDocument();
+      expect(screen.getByText('Ticket status updated successfully.')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Resolve' })).toBeInTheDocument();
+    });
+
+    expect(mockTransitionTicketStatus).toHaveBeenCalledWith(42, { status: 'IN_PROGRESS' });
+  });
+
+  it('keeps status transition actions available while editing other fields', async () => {
+    renderTicketDetailsPage();
+    await waitForTicketToLoad();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Edit Ticket' }));
+
+    expect(screen.getByRole('heading', { name: 'Status Actions' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Start Progress' })).toBeInTheDocument();
   });
 
   it('adds a comment while keeping ticket details visible', async () => {

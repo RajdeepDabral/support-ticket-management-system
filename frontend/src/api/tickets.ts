@@ -7,6 +7,7 @@ import type {
   Ticket,
   TicketDetail,
   UpdateTicketRequest,
+  UpdateTicketStatusRequest,
 } from '../types/ticket';
 
 function buildListTicketsPath(params?: ListTicketsParams): string {
@@ -50,4 +51,11 @@ export async function getComments(ticketId: number): Promise<Comment[]> {
 
 export function addComment(ticketId: number, request: CreateCommentRequest): Promise<Comment> {
   return apiClient.post<Comment>(`/tickets/${ticketId}/comments`, request);
+}
+
+export function transitionTicketStatus(
+  ticketId: number,
+  request: UpdateTicketStatusRequest,
+): Promise<Ticket> {
+  return apiClient.patch<Ticket>(`/tickets/${ticketId}/status`, request);
 }

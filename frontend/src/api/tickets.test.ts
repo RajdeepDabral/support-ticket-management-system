@@ -1,6 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { apiClient } from './client';
-import { addComment, createTicket, getComments, getTicket, listTickets, updateTicket } from './tickets';
+import {
+  addComment,
+  createTicket,
+  getComments,
+  getTicket,
+  listTickets,
+  transitionTicketStatus,
+  updateTicket,
+} from './tickets';
 
 vi.mock('./client', () => ({
   apiClient: {
@@ -165,6 +173,29 @@ describe('getComments', () => {
     expect(mockGet).toHaveBeenCalledWith('/tickets/42');
     expect(comments).toHaveLength(1);
     expect(comments[0].content).toBe('Investigating the issue.');
+  });
+});
+
+describe('transitionTicketStatus', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('sends PATCH /tickets/{ticketId}/status with only the target status', async () => {
+    mockPatch.mockResolvedValue({
+      id: 42,
+      title: 'Unable to login',
+      description: 'User cannot login.',
+      priority: 'HIGH',
+      status: 'IN_PROGRESS',
+      assignee: 'john.doe',
+      createdAt: '2026-09-25T08:00:00Z',
+      updatedAt: '2026-09-25T09:00:00Z',
+    });
+
+    await transitionTicketStatus(42, { status: 'IN_PROGRESS' });
+
+    expect(mockPatch).toHaveBeenCalledWith('/tickets/42/status', { status: 'IN_PROGRESS' });
   });
 });
 

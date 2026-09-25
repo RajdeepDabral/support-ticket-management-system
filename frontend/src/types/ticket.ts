@@ -56,6 +56,10 @@ export interface CreateCommentRequest {
   author: string;
 }
 
+export interface UpdateTicketStatusRequest {
+  status: TicketStatus;
+}
+
 export const TICKET_PRIORITY_OPTIONS: TicketPriority[] = [
   'LOW',
   'MEDIUM',

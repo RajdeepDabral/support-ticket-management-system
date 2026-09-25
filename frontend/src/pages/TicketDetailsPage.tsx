@@ -6,6 +6,7 @@ import {
   COMMENTS_LOAD_ERROR_MESSAGE,
   TicketCommentsSection,
 } from '../components/TicketCommentsSection';
+import { TicketStatusActions } from '../components/TicketStatusActions';
 import { formatDateTime } from '../lib/formatDateTime';
 import { ApiError } from '../types/api';
 import type { Comment, TicketDetail, UpdateTicketRequest } from '../types/ticket';
@@ -16,6 +17,7 @@ const NETWORK_ERROR_MESSAGE =
 const UPDATE_ERROR_MESSAGE = 'Unable to update ticket. Please try again.';
 const NOT_FOUND_MESSAGE = 'Ticket not found.';
 const UPDATE_SUCCESS_MESSAGE = 'Ticket updated successfully.';
+const STATUS_SUCCESS_MESSAGE = 'Ticket status updated successfully.';
 
 function mapUpdateApiError(error: ApiError): {
   fieldErrors: Partial<Record<TicketEditField, string>>;
@@ -80,6 +82,7 @@ export function TicketDetailsPage() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<TicketEditField, string>>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(null);
+  const [statusSuccessMessage, setStatusSuccessMessage] = useState<string | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
 
   const loadTicket = useCallback(async () => {
@@ -122,6 +125,7 @@ export function TicketDetailsPage() {
     setFieldErrors({});
     setFormError(null);
     setSaveSuccessMessage(null);
+    setStatusSuccessMessage(null);
     setComments([]);
     void loadTicket();
   }, [loadTicket]);
@@ -131,6 +135,7 @@ export function TicketDetailsPage() {
     setFieldErrors({});
     setFormError(null);
     setSaveSuccessMessage(null);
+    setStatusSuccessMessage(null);
   };
 
   const handleCancel = () => {
@@ -148,6 +153,7 @@ export function TicketDetailsPage() {
     setFieldErrors({});
     setFormError(null);
     setSaveSuccessMessage(null);
+    setStatusSuccessMessage(null);
 
     try {
       const updatedTicket = await updateTicket(ticketId, request);
@@ -207,6 +213,12 @@ export function TicketDetailsPage() {
             </div>
           )}
 
+          {statusSuccessMessage && (
+            <div className="ticket-details-success" role="status">
+              <p>{statusSuccessMessage}</p>
+            </div>
+          )}
+
           {isEditing ? (
             <TicketEditForm
               ticket={ticket}
@@ -260,6 +272,20 @@ export function TicketDetailsPage() {
               </div>
             </div>
           )}
+
+          <TicketStatusActions
+            ticketId={ticket.id}
+            currentStatus={ticket.status}
+            onTransitionSuccess={(updatedTicket) => {
+              setTicket({ ...updatedTicket, comments: ticket.comments });
+              setStatusSuccessMessage(STATUS_SUCCESS_MESSAGE);
+            }}
+            onTicketNotFound={() => {
+              setIsNotFound(true);
+              setTicket(null);
+              setComments([]);
+            }}
+          />
         </>
       )}
 
