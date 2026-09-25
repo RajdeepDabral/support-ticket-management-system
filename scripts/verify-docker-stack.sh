@@ -33,6 +33,9 @@ echo "Postgres health: $(docker inspect --format='{{.State.Health.Status}}' supp
 echo "Backend health:  $(docker inspect --format='{{.State.Health.Status}}' support-ticket-backend)"
 echo "Frontend health: $(docker inspect --format='{{.State.Health.Status}}' support-ticket-frontend)"
 
+echo "==> Verifying backend actuator health"
+curl -fsS http://localhost:8080/actuator/health | grep -q '"status":"UP"'
+
 echo "==> Verifying Flyway migration in backend logs"
 docker compose logs backend | grep -E "Flyway|Successfully applied|Schema.*is up to date" | tail -5
 

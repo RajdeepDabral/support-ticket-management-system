@@ -2,22 +2,34 @@
 
 Specification-driven support ticket management application with a Spring Boot backend, React frontend, and PostgreSQL database.
 
+> **Start here:** See **[RUN.md](RUN.md)** for step-by-step instructions to start the full stack with Docker Compose, test the app, and run verification scripts. Humans and AI agents should use `RUN.md` as the entry point.
+
 ## Technology Stack
 
 - **Backend:** Java 21, Spring Boot 3.3.5, Maven, PostgreSQL, Flyway
 - **Frontend:** React 19, TypeScript, Vite, React Router
 - **API:** REST at `/api/v1/tickets`
 - **Containerization:** Docker Compose (PostgreSQL + backend + frontend)
+- **API docs:** Swagger UI at `/swagger-ui.html`
+- **Ops:** Spring Boot Actuator at `/actuator/health`
 
 ## Quick Start (Docker)
 
-Run the complete application stack:
+Run the complete application stack from the repository root:
 
 ```bash
 docker compose up --build -d
+docker compose ps    # wait until all services are healthy
 ```
 
-Open the UI at [http://localhost:3000](http://localhost:3000).
+| Service | URL |
+|---------|-----|
+| Web UI | http://localhost:3000 |
+| REST API | http://localhost:8080/api/v1/tickets |
+| Swagger UI | http://localhost:8080/swagger-ui.html |
+| Health | http://localhost:8080/actuator/health |
+
+Full instructions, smoke tests, and troubleshooting: **[RUN.md](RUN.md)**
 
 The frontend nginx container serves the React app and proxies `/api/v1` to the backend service. The browser uses relative API URLs (`/api/v1`), so it never needs to resolve Docker-internal hostnames.
 

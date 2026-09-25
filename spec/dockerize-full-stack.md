@@ -62,7 +62,7 @@ Browser → http://localhost:3000
 | Port | `8080` |
 | JDBC URL (internal) | `jdbc:postgresql://postgres:5432/support_ticket` |
 | Flyway | Enabled; runs on startup before Hibernate validate |
-| Healthcheck | `curl -sf http://127.0.0.1:8080/api/v1/tickets` |
+| Healthcheck | `curl -sf http://127.0.0.1:8080/actuator/health` |
 | Start period | 120s (cold start includes Flyway + JVM) |
 | Depends on | `postgres` healthy |
 

@@ -28,6 +28,18 @@ Spring Boot backend for the Support Ticket Management System.
 - Spring Boot 3.3.5
 - Maven
 - PostgreSQL
+- Spring Boot Actuator (health)
+- SpringDoc OpenAPI (Swagger UI)
+
+## API Documentation and Health
+
+When the backend is running:
+
+| Endpoint | URL |
+|----------|-----|
+| Swagger UI | http://localhost:8080/swagger-ui.html |
+| OpenAPI JSON | http://localhost:8080/api-docs |
+| Health | http://localhost:8080/actuator/health |
 
 ## Prerequisites
 
