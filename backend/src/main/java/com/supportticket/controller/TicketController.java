@@ -2,11 +2,14 @@ package com.supportticket.controller;
 
 import java.util.List;
 
+import com.supportticket.dto.CommentResponse;
+import com.supportticket.dto.CreateCommentRequest;
 import com.supportticket.dto.CreateTicketRequest;
 import com.supportticket.dto.TicketDetailResponse;
 import com.supportticket.dto.TicketResponse;
 import com.supportticket.dto.UpdateTicketRequest;
 import com.supportticket.dto.UpdateTicketStatusRequest;
+import com.supportticket.service.CommentService;
 import com.supportticket.service.TicketService;
 
 import jakarta.validation.Valid;
@@ -26,9 +29,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TicketController {
 
     private final TicketService ticketService;
+    private final CommentService commentService;
 
-    public TicketController(TicketService ticketService) {
+    public TicketController(TicketService ticketService, CommentService commentService) {
         this.ticketService = ticketService;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -61,5 +66,13 @@ public class TicketController {
             @Valid @RequestBody UpdateTicketStatusRequest request) {
         TicketResponse response = ticketService.transitionTicketStatus(ticketId, request.getStatus());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{ticketId}/comments")
+    public ResponseEntity<CommentResponse> addComment(
+            @PathVariable Long ticketId,
+            @Valid @RequestBody CreateCommentRequest request) {
+        CommentResponse response = commentService.addComment(ticketId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

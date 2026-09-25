@@ -13,6 +13,7 @@ import com.supportticket.domain.TicketPriority;
 import com.supportticket.domain.TicketStatus;
 import com.supportticket.dto.TicketResponse;
 import com.supportticket.exception.GlobalExceptionHandler;
+import com.supportticket.service.CommentService;
 import com.supportticket.service.TicketService;
 
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ class TicketControllerTest {
 
     @MockBean
     private TicketService ticketService;
+
+    @MockBean
+    private CommentService commentService;
 
     @Test
     void createTicket_returnsCreatedWithTicketResponse() throws Exception {

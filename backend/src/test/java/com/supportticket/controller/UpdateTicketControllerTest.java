@@ -17,6 +17,7 @@ import com.supportticket.dto.TicketResponse;
 import com.supportticket.dto.UpdateTicketCommand;
 import com.supportticket.exception.GlobalExceptionHandler;
 import com.supportticket.exception.TicketNotFoundException;
+import com.supportticket.service.CommentService;
 import com.supportticket.service.TicketService;
 
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,9 @@ class UpdateTicketControllerTest {
 
     @MockBean
     private TicketService ticketService;
+
+    @MockBean
+    private CommentService commentService;
 
     @Test
     void updateTicket_updatesTitle() throws Exception {

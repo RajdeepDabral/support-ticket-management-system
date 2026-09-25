@@ -16,6 +16,7 @@ import com.supportticket.dto.TicketDetailResponse;
 import com.supportticket.dto.TicketResponse;
 import com.supportticket.exception.GlobalExceptionHandler;
 import com.supportticket.exception.TicketNotFoundException;
+import com.supportticket.service.CommentService;
 import com.supportticket.service.TicketService;
 
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,9 @@ class TicketRetrievalControllerTest {
 
     @MockBean
     private TicketService ticketService;
+
+    @MockBean
+    private CommentService commentService;
 
     @Test
     void listTickets_returns200WithTickets() throws Exception {
@@ -89,6 +93,7 @@ class TicketRetrievalControllerTest {
                 now,
                 List.of(new CommentResponse(
                         501L,
+                        1001L,
                         "Investigating the authentication issue.",
                         "jane.doe",
                         now))));

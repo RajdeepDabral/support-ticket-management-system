@@ -16,6 +16,7 @@ import com.supportticket.dto.TicketResponse;
 import com.supportticket.exception.GlobalExceptionHandler;
 import com.supportticket.exception.InvalidStatusTransitionException;
 import com.supportticket.exception.TicketNotFoundException;
+import com.supportticket.service.CommentService;
 import com.supportticket.service.TicketService;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,6 +40,9 @@ class TicketStatusTransitionControllerTest {
 
     @MockBean
     private TicketService ticketService;
+
+    @MockBean
+    private CommentService commentService;
 
     @ParameterizedTest(name = "{0} -> {1} returns 200")
     @MethodSource("validTransitions")

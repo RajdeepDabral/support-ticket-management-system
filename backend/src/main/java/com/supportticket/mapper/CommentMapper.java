@@ -11,6 +11,7 @@ public class CommentMapper {
     public CommentResponse toResponse(Comment comment) {
         return new CommentResponse(
                 comment.getId(),
+                comment.getTicket().getId(),
                 comment.getContent(),
                 comment.getAuthor(),
                 comment.getCreatedAt());
