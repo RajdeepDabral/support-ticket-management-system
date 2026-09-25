@@ -7,17 +7,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import com.supportticket.domain.Ticket;
 import com.supportticket.domain.TicketPriority;
 import com.supportticket.domain.TicketStatus;
+import com.supportticket.domain.Comment;
 import com.supportticket.dto.CreateTicketRequest;
+import com.supportticket.dto.TicketDetailResponse;
 import com.supportticket.dto.TicketResponse;
 import com.supportticket.dto.UpdateTicketCommand;
 import com.supportticket.exception.InvalidRequestException;
 import com.supportticket.exception.TicketNotFoundException;
+import com.supportticket.mapper.CommentMapper;
 import com.supportticket.mapper.TicketMapper;
+import com.supportticket.repository.CommentRepository;
 import com.supportticket.repository.TicketRepository;
 import com.supportticket.state.TicketStateTransitionValidator;
 
@@ -38,7 +43,10 @@ class TicketServiceImplTest {
     @Mock
     private TicketRepository ticketRepository;
 
-    private final TicketMapper ticketMapper = new TicketMapper();
+    @Mock
+    private CommentRepository commentRepository;
+
+    private final TicketMapper ticketMapper = new TicketMapper(new CommentMapper());
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final TicketStateTransitionValidator stateTransitionValidator = new TicketStateTransitionValidator();
 
@@ -47,7 +55,7 @@ class TicketServiceImplTest {
     @BeforeEach
     void setUp() {
         ticketService = new TicketServiceImpl(
-                ticketRepository, ticketMapper, validator, stateTransitionValidator);
+                ticketRepository, commentRepository, ticketMapper, validator, stateTransitionValidator);
     }
 
     @Test
@@ -127,14 +135,42 @@ class TicketServiceImplTest {
     }
 
     @Test
-    void getTicket_returnsExistingTicket() {
-        Ticket ticket = persistedTicket(10L, TicketStatus.IN_PROGRESS);
-        when(ticketRepository.findById(10L)).thenReturn(Optional.of(ticket));
+    void listTickets_returnsAllTickets() {
+        Ticket first = persistedTicket(1L, TicketStatus.OPEN);
+        Ticket second = persistedTicket(2L, TicketStatus.RESOLVED);
+        when(ticketRepository.findAll()).thenReturn(List.of(first, second));
 
-        TicketResponse response = ticketService.getTicket(10L);
+        List<TicketResponse> responses = ticketService.listTickets();
+
+        assertThat(responses).hasSize(2);
+        assertThat(responses.get(0).getId()).isEqualTo(1L);
+        assertThat(responses.get(1).getStatus()).isEqualTo(TicketStatus.RESOLVED);
+    }
+
+    @Test
+    void listTickets_returnsEmptyListWhenNoTicketsExist() {
+        when(ticketRepository.findAll()).thenReturn(List.of());
+
+        assertThat(ticketService.listTickets()).isEmpty();
+    }
+
+    @Test
+    void getTicket_returnsExistingTicketWithComments() {
+        Ticket ticket = persistedTicket(10L, TicketStatus.IN_PROGRESS);
+        Comment comment = new Comment(ticket, "Investigating the issue.", "jane.doe");
+        ReflectionTestUtils.setField(comment, "id", 501L);
+        ReflectionTestUtils.setField(comment, "createdAt", OffsetDateTime.now());
+
+        when(ticketRepository.findById(10L)).thenReturn(Optional.of(ticket));
+        when(commentRepository.findByTicket_Id(10L)).thenReturn(List.of(comment));
+
+        TicketDetailResponse response = ticketService.getTicket(10L);
 
         assertThat(response.getId()).isEqualTo(10L);
         assertThat(response.getStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
+        assertThat(response.getComments()).hasSize(1);
+        assertThat(response.getComments().get(0).getContent()).isEqualTo("Investigating the issue.");
+        assertThat(response.getComments().get(0).getAuthor()).isEqualTo("jane.doe");
     }
 
     @Test

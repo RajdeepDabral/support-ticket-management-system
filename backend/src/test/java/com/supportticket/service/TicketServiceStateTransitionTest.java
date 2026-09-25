@@ -18,7 +18,9 @@ import com.supportticket.dto.TicketResponse;
 import com.supportticket.exception.InvalidRequestException;
 import com.supportticket.exception.InvalidStatusTransitionException;
 import com.supportticket.exception.TicketNotFoundException;
+import com.supportticket.mapper.CommentMapper;
 import com.supportticket.mapper.TicketMapper;
+import com.supportticket.repository.CommentRepository;
 import com.supportticket.repository.TicketRepository;
 import com.supportticket.state.TicketStateTransitionValidator;
 
@@ -41,7 +43,10 @@ class TicketServiceStateTransitionTest {
     @Mock
     private TicketRepository ticketRepository;
 
-    private final TicketMapper ticketMapper = new TicketMapper();
+    @Mock
+    private CommentRepository commentRepository;
+
+    private final TicketMapper ticketMapper = new TicketMapper(new CommentMapper());
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final TicketStateTransitionValidator stateTransitionValidator = new TicketStateTransitionValidator();
 
@@ -50,7 +55,7 @@ class TicketServiceStateTransitionTest {
     @BeforeEach
     void setUp() {
         ticketService = new TicketServiceImpl(
-                ticketRepository, ticketMapper, validator, stateTransitionValidator);
+                ticketRepository, commentRepository, ticketMapper, validator, stateTransitionValidator);
     }
 
     @ParameterizedTest(name = "ticket {0} -> {1} persists new status")

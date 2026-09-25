@@ -1,5 +1,7 @@
 package com.supportticket.service;
 
+import java.util.List;
+
 import com.supportticket.domain.Ticket;
 import com.supportticket.domain.TicketStatus;
 import com.supportticket.dto.CreateTicketRequest;
@@ -7,7 +9,9 @@ import com.supportticket.dto.TicketResponse;
 import com.supportticket.dto.UpdateTicketCommand;
 import com.supportticket.exception.InvalidRequestException;
 import com.supportticket.exception.TicketNotFoundException;
+import com.supportticket.dto.TicketDetailResponse;
 import com.supportticket.mapper.TicketMapper;
+import com.supportticket.repository.CommentRepository;
 import com.supportticket.repository.TicketRepository;
 import com.supportticket.state.TicketStateTransitionValidator;
 
@@ -21,16 +25,19 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketServiceImpl implements TicketService {
 
     private final TicketRepository ticketRepository;
+    private final CommentRepository commentRepository;
     private final TicketMapper ticketMapper;
     private final Validator validator;
     private final TicketStateTransitionValidator stateTransitionValidator;
 
     public TicketServiceImpl(
             TicketRepository ticketRepository,
+            CommentRepository commentRepository,
             TicketMapper ticketMapper,
             Validator validator,
             TicketStateTransitionValidator stateTransitionValidator) {
         this.ticketRepository = ticketRepository;
+        this.commentRepository = commentRepository;
         this.ticketMapper = ticketMapper;
         this.validator = validator;
         this.stateTransitionValidator = stateTransitionValidator;
@@ -53,10 +60,18 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public TicketResponse getTicket(Long ticketId) {
+    public List<TicketResponse> listTickets() {
+        return ticketRepository.findAll().stream()
+                .map(ticketMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TicketDetailResponse getTicket(Long ticketId) {
         Ticket ticket = ticketRepository.findById(ticketId)
                 .orElseThrow(() -> new TicketNotFoundException(ticketId));
-        return ticketMapper.toResponse(ticket);
+        return ticketMapper.toDetailResponse(ticket, commentRepository.findByTicket_Id(ticketId));
     }
 
     @Override

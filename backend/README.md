@@ -9,8 +9,9 @@ Spring Boot backend for the Support Ticket Management System.
 **Ticket Domain and Business Service** complete.
 **Ticket State Machine** complete.
 **REST API Foundation — Create Ticket** complete (`POST /api/v1/tickets`).
+**List Tickets and View Ticket Details** complete (`GET /api/v1/tickets`, `GET /api/v1/tickets/{ticketId}`).
 
-List, get, update, status transition, comments, search, and frontend are not implemented yet.
+Update, status transition, comment creation, search, filtering, and frontend are not implemented yet.
 
 ## Technology
 
