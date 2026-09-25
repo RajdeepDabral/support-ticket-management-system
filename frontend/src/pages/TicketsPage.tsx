@@ -70,19 +70,21 @@ export function TicketsPage() {
 
   return (
     <section className="tickets-page">
-      <div className="tickets-page-header">
+      <div className="page-header">
         <h2>Tickets</h2>
-        <Link to="/tickets/new" className="button-link">Create Ticket</Link>
+        <Link to="/tickets/new" className="button-primary">Create Ticket</Link>
       </div>
 
-      <TicketFilters
-        searchInput={searchInput}
-        selectedStatus={selectedStatus}
-        isLoading={isLoading}
-        onSearchInputChange={setSearchInput}
-        onSearchSubmit={handleSearchSubmit}
-        onStatusChange={handleStatusChange}
-      />
+      <div className="card filters-card">
+        <TicketFilters
+          searchInput={searchInput}
+          selectedStatus={selectedStatus}
+          isLoading={isLoading}
+          onSearchInputChange={setSearchInput}
+          onSearchSubmit={handleSearchSubmit}
+          onStatusChange={handleStatusChange}
+        />
+      </div>
 
       <TicketList
         tickets={tickets}

@@ -6,6 +6,8 @@ import {
   COMMENTS_LOAD_ERROR_MESSAGE,
   TicketCommentsSection,
 } from '../components/TicketCommentsSection';
+import { PriorityBadge } from '../components/PriorityBadge';
+import { StatusBadge } from '../components/StatusBadge';
 import { TicketStatusActions } from '../components/TicketStatusActions';
 import { formatDateTime } from '../lib/formatDateTime';
 import { ApiError } from '../types/api';
@@ -188,7 +190,10 @@ export function TicketDetailsPage() {
       </div>
 
       {isLoading && (
-        <p className="ticket-details-loading" role="status">Loading ticket...</p>
+        <div className="loading-state" role="status" aria-live="polite">
+          <span className="loading-spinner" aria-hidden="true" />
+          <span>Loading ticket...</span>
+        </div>
       )}
 
       {!isLoading && isNotFound && (
@@ -231,7 +236,7 @@ export function TicketDetailsPage() {
               onCancel={handleCancel}
             />
           ) : (
-            <div className="ticket-details-view">
+            <div className="ticket-details-view card">
               <dl className="ticket-details-meta">
                 <div className="ticket-details-meta-item">
                   <dt>Ticket ID</dt>
@@ -247,11 +252,15 @@ export function TicketDetailsPage() {
                 </div>
                 <div className="ticket-details-meta-item">
                   <dt>Priority</dt>
-                  <dd>{ticket.priority}</dd>
+                  <dd>
+                    <PriorityBadge priority={ticket.priority} />
+                  </dd>
                 </div>
                 <div className="ticket-details-meta-item">
                   <dt>Status</dt>
-                  <dd>{ticket.status}</dd>
+                  <dd>
+                    <StatusBadge status={ticket.status} />
+                  </dd>
                 </div>
                 <div className="ticket-details-meta-item">
                   <dt>Assignee</dt>

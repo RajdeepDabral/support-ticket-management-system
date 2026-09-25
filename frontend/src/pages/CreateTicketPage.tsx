@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createTicket } from '../api/tickets';
 import {
   CreateTicketForm,
@@ -75,15 +75,20 @@ export function CreateTicketPage() {
 
   return (
     <section className="create-ticket-page">
-      <h2>Create Ticket</h2>
-      <CreateTicketForm
+      <div className="page-header">
+        <h2>Create Ticket</h2>
+        <Link to="/tickets" className="button-link">Back to tickets</Link>
+      </div>
+      <div className="card form-card">
+        <CreateTicketForm
         isSubmitting={isSubmitting}
         fieldErrors={fieldErrors}
         formError={formError}
         onSubmit={(request) => {
           void handleSubmit(request);
         }}
-      />
+        />
+      </div>
     </section>
   );
 }

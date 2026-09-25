@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { Ticket } from '../types/ticket';
 import { TicketRow } from './TicketRow';
 
@@ -17,7 +18,12 @@ export function TicketList({
   onRetry,
 }: TicketListProps) {
   if (isLoading) {
-    return <p role="status">Loading tickets...</p>;
+    return (
+      <div className="loading-state" role="status" aria-live="polite">
+        <span className="loading-spinner" aria-hidden="true" />
+        <span>Loading tickets...</span>
+      </div>
+    );
   }
 
   if (error) {
@@ -33,14 +39,23 @@ export function TicketList({
 
   if (tickets.length === 0) {
     return (
-      <p role="status">
-        {hasActiveFilters ? 'No tickets match your search criteria.' : 'No tickets found.'}
-      </p>
+      <div className="empty-state" role="status">
+        <p>
+          {hasActiveFilters
+            ? 'No tickets match your search criteria.'
+            : 'No tickets found yet.'}
+        </p>
+        {!hasActiveFilters && (
+          <Link to="/tickets/new" className="button-primary">
+            Create your first ticket
+          </Link>
+        )}
+      </div>
     );
   }
 
   return (
-    <div className="ticket-table-wrapper">
+    <div className="ticket-table-wrapper card">
       <table className="ticket-table">
         <thead>
           <tr>

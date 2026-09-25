@@ -64,7 +64,7 @@ describe('TicketsPage', () => {
     renderTicketsPage();
 
     await waitFor(() => {
-      expect(screen.getByText('No tickets found.')).toBeInTheDocument();
+      expect(screen.getByText('No tickets found yet.')).toBeInTheDocument();
     });
   });
 
