@@ -18,6 +18,8 @@ Spring Boot backend for the Support Ticket Management System.
 
 **Ticket Search and Status Filter** complete (`GET /api/v1/tickets?keyword=&status=`).
 
+**Backend Integration and Acceptance Tests** complete (`SupportTicketBackendAcceptanceTest`).
+
 Frontend is not implemented yet.
 
 ## Technology
