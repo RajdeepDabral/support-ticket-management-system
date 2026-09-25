@@ -93,6 +93,30 @@ class UpdateTicketIntegrationTest extends AbstractPostgreSQLContainerTest {
     }
 
     @Test
+    void updateTicket_rejectsStatusField() throws Exception {
+        Ticket ticket = ticketRepository.save(new Ticket(
+                "Original title",
+                "Original description",
+                TicketPriority.MEDIUM,
+                TicketStatus.OPEN,
+                "original.assignee"));
+
+        mockMvc.perform(patch(TICKETS_URL + "/" + ticket.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "status": "RESOLVED"
+                                }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("VALIDATION_ERROR"))
+                .andExpect(jsonPath("$.message").value("Request contains unsupported fields."));
+
+        Ticket unchanged = ticketRepository.findById(ticket.getId()).orElseThrow();
+        assertThat(unchanged.getStatus()).isEqualTo(TicketStatus.OPEN);
+    }
+
+    @Test
     void updateTicket_returns404ForMissingTicket() throws Exception {
         mockMvc.perform(patch(TICKETS_URL + "/424242")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -166,8 +166,12 @@ class TicketStatusTransitionIntegrationTest extends AbstractPostgreSQLContainerT
                 Arguments.of(TicketStatus.IN_PROGRESS, TicketStatus.OPEN),
                 Arguments.of(TicketStatus.IN_PROGRESS, TicketStatus.CLOSED),
                 Arguments.of(TicketStatus.RESOLVED, TicketStatus.OPEN),
+                Arguments.of(TicketStatus.RESOLVED, TicketStatus.IN_PROGRESS),
+                Arguments.of(TicketStatus.RESOLVED, TicketStatus.CANCELLED),
                 Arguments.of(TicketStatus.CLOSED, TicketStatus.OPEN),
-                Arguments.of(TicketStatus.CANCELLED, TicketStatus.OPEN));
+                Arguments.of(TicketStatus.CLOSED, TicketStatus.RESOLVED),
+                Arguments.of(TicketStatus.CANCELLED, TicketStatus.OPEN),
+                Arguments.of(TicketStatus.CANCELLED, TicketStatus.CLOSED));
     }
 
     private static Stream<Arguments> sameStatusTransitions() {

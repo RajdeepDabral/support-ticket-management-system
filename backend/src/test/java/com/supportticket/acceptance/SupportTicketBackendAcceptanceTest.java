@@ -574,7 +574,13 @@ class SupportTicketBackendAcceptanceTest extends AbstractPostgreSQLContainerTest
                 Arguments.of(TicketStatus.OPEN, TicketStatus.RESOLVED),
                 Arguments.of(TicketStatus.OPEN, TicketStatus.CLOSED),
                 Arguments.of(TicketStatus.IN_PROGRESS, TicketStatus.OPEN),
-                Arguments.of(TicketStatus.RESOLVED, TicketStatus.OPEN));
+                Arguments.of(TicketStatus.IN_PROGRESS, TicketStatus.CLOSED),
+                Arguments.of(TicketStatus.RESOLVED, TicketStatus.OPEN),
+                Arguments.of(TicketStatus.RESOLVED, TicketStatus.IN_PROGRESS),
+                Arguments.of(TicketStatus.CLOSED, TicketStatus.OPEN),
+                Arguments.of(TicketStatus.CLOSED, TicketStatus.RESOLVED),
+                Arguments.of(TicketStatus.CANCELLED, TicketStatus.OPEN),
+                Arguments.of(TicketStatus.CANCELLED, TicketStatus.CLOSED));
     }
 
     static Stream<Arguments> invalidTicketRequests() {
