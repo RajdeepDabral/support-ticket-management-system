@@ -51,6 +51,11 @@ export interface UpdateTicketRequest {
   assignee?: string;
 }
 
+export interface CreateCommentRequest {
+  content: string;
+  author: string;
+}
+
 export const TICKET_PRIORITY_OPTIONS: TicketPriority[] = [
   'LOW',
   'MEDIUM',

@@ -1,5 +1,7 @@
 import { apiClient } from './client';
 import type {
+  Comment,
+  CreateCommentRequest,
   CreateTicketRequest,
   ListTicketsParams,
   Ticket,
@@ -39,4 +41,13 @@ export function getTicket(ticketId: number): Promise<TicketDetail> {
 
 export function updateTicket(ticketId: number, request: UpdateTicketRequest): Promise<Ticket> {
   return apiClient.patch<Ticket>(`/tickets/${ticketId}`, request);
+}
+
+export async function getComments(ticketId: number): Promise<Comment[]> {
+  const ticket = await getTicket(ticketId);
+  return ticket.comments ?? [];
+}
+
+export function addComment(ticketId: number, request: CreateCommentRequest): Promise<Comment> {
+  return apiClient.post<Comment>(`/tickets/${ticketId}/comments`, request);
 }

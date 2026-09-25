@@ -1,15 +1,24 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { getTicket, updateTicket } from '../api/tickets';
+import { addComment, getTicket, updateTicket } from '../api/tickets';
 import { ApiError } from '../types/api';
 import type { Ticket, TicketDetail } from '../types/ticket';
 import { TicketDetailsPage } from './TicketDetailsPage';
 
-vi.mock('../api/tickets');
+vi.mock('../api/tickets', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../api/tickets')>();
+  return {
+    ...actual,
+    getTicket: vi.fn(),
+    updateTicket: vi.fn(),
+    addComment: vi.fn(),
+  };
+});
 
 const mockGetTicket = vi.mocked(getTicket);
 const mockUpdateTicket = vi.mocked(updateTicket);
+const mockAddComment = vi.mocked(addComment);
 
 const baseTicket: TicketDetail = {
   id: 42,
@@ -71,7 +80,9 @@ describe('TicketDetailsPage', () => {
     renderTicketDetailsPage();
 
     expect(screen.getByText('Loading ticket...')).toBeInTheDocument();
+    expect(screen.getByText('Loading comments...')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Edit Ticket' })).not.toBeInTheDocument();
+    expect(screen.queryByText('No comments yet.')).not.toBeInTheDocument();
   });
 
   it('displays a not-found state for HTTP 404', async () => {
@@ -107,7 +118,7 @@ describe('TicketDetailsPage', () => {
 
     expect(await screen.findByText('Unable to load ticket. Please try again.')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Try again' })[0]);
 
     await waitForTicketToLoad();
     expect(mockGetTicket).toHaveBeenCalledTimes(2);
@@ -332,5 +343,79 @@ describe('TicketDetailsPage', () => {
     fireEvent.click(screen.getByRole('link', { name: 'Back to tickets' }));
 
     expect(screen.getByRole('heading', { name: 'Tickets' })).toBeInTheDocument();
+  });
+
+  it('displays comments loaded with the ticket', async () => {
+    mockGetTicket.mockResolvedValue({
+      ...baseTicket,
+      comments: [
+        {
+          id: 1,
+          ticketId: 42,
+          content: 'Investigating the issue.',
+          author: 'jane.doe',
+          createdAt: '2026-09-25T09:00:00Z',
+        },
+      ],
+    });
+
+    renderTicketDetailsPage();
+    await waitForTicketToLoad();
+
+    expect(screen.getByRole('heading', { name: 'Comments' })).toBeInTheDocument();
+    expect(screen.getByText('Investigating the issue.')).toBeInTheDocument();
+    expect(screen.getByText('jane.doe')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Edit Ticket' })).toBeInTheDocument();
+  });
+
+  it('displays an empty comments state after the ticket loads', async () => {
+    renderTicketDetailsPage();
+    await waitForTicketToLoad();
+
+    expect(screen.getByText('No comments yet.')).toBeInTheDocument();
+  });
+
+  it('displays a comments load error and retries through ticket reload', async () => {
+    mockGetTicket
+      .mockRejectedValueOnce(
+        new ApiError(500, {
+          status: 500,
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'An unexpected error occurred.',
+        }),
+      )
+      .mockResolvedValueOnce(baseTicket);
+
+    renderTicketDetailsPage();
+
+    expect(await screen.findByText('Unable to load comments. Please try again.')).toBeInTheDocument();
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Try again' })[0]);
+
+    await waitForTicketToLoad();
+    expect(mockGetTicket).toHaveBeenCalledTimes(2);
+  });
+
+  it('adds a comment while keeping ticket details visible', async () => {
+    mockAddComment.mockResolvedValue({
+      id: 2,
+      ticketId: 42,
+      content: 'I have investigated the issue.',
+      author: 'john.doe',
+      createdAt: '2026-09-25T11:30:00Z',
+    });
+
+    renderTicketDetailsPage();
+    await waitForTicketToLoad();
+
+    fireEvent.change(screen.getByLabelText('Comment'), {
+      target: { value: 'I have investigated the issue.' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Add Comment' }));
+
+    await waitFor(() => {
+      expect(screen.getByText('I have investigated the issue.')).toBeInTheDocument();
+      expect(screen.getByText('Unable to login')).toBeInTheDocument();
+    });
   });
 });

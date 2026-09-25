@@ -2,9 +2,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getTicket, updateTicket } from '../api/tickets';
 import { TicketEditForm, type TicketEditField } from '../components/TicketEditForm';
+import {
+  COMMENTS_LOAD_ERROR_MESSAGE,
+  TicketCommentsSection,
+} from '../components/TicketCommentsSection';
 import { formatDateTime } from '../lib/formatDateTime';
 import { ApiError } from '../types/api';
-import type { TicketDetail, UpdateTicketRequest } from '../types/ticket';
+import type { Comment, TicketDetail, UpdateTicketRequest } from '../types/ticket';
 
 const LOAD_ERROR_MESSAGE = 'Unable to load ticket. Please try again.';
 const NETWORK_ERROR_MESSAGE =
@@ -76,6 +80,7 @@ export function TicketDetailsPage() {
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<TicketEditField, string>>>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [saveSuccessMessage, setSaveSuccessMessage] = useState<string | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   const loadTicket = useCallback(async () => {
     if (ticketId === null) {
@@ -93,8 +98,10 @@ export function TicketDetailsPage() {
     try {
       const data = await getTicket(ticketId);
       setTicket(data);
+      setComments(data.comments ?? []);
     } catch (error) {
       setTicket(null);
+      setComments([]);
 
       if (error instanceof ApiError && error.status === 404) {
         setIsNotFound(true);
@@ -115,6 +122,7 @@ export function TicketDetailsPage() {
     setFieldErrors({});
     setFormError(null);
     setSaveSuccessMessage(null);
+    setComments([]);
     void loadTicket();
   }, [loadTicket]);
 
@@ -152,6 +160,7 @@ export function TicketDetailsPage() {
           setIsEditing(false);
           setIsNotFound(true);
           setTicket(null);
+          setComments([]);
         } else {
           const mapped = mapUpdateApiError(error);
           setFieldErrors(mapped.fieldErrors);
@@ -252,6 +261,31 @@ export function TicketDetailsPage() {
             </div>
           )}
         </>
+      )}
+
+      {ticketId !== null && !isNotFound && (
+        <TicketCommentsSection
+          ticketId={ticketId}
+          author={ticket?.assignee ?? ''}
+          comments={comments}
+          isLoadingComments={isLoading}
+          commentsLoadError={
+            !isLoading && loadError
+              ? loadError === NETWORK_ERROR_MESSAGE
+                ? NETWORK_ERROR_MESSAGE
+                : COMMENTS_LOAD_ERROR_MESSAGE
+              : null
+          }
+          onCommentsChange={setComments}
+          onRetryLoadComments={() => {
+            void loadTicket();
+          }}
+          onTicketNotFound={() => {
+            setIsNotFound(true);
+            setTicket(null);
+            setComments([]);
+          }}
+        />
       )}
     </section>
   );
