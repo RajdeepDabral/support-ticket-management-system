@@ -723,18 +723,28 @@ Reusable engineering guidance will be maintained in the repository.
 The expected structure is:
 
 ```text
-.cursor/
-├── rules/
-│   ├── java-springboot.md
-│   ├── testing.md
-│   ├── api-standards.md
-│   └── documentation.md
-│
-└── commands/
-    ├── review-code.md
-    ├── review-spec.md
-    └── generate-tests.md
+rules/
+├── java-springboot.md
+├── testing.md
+└── api-standards.md
+
+commands/
+├── review-code.md
+├── review-spec.md
+└── generate-tests.md
+
+skills/
+└── documentation/
+    └── SKILL.md
+
+docs/
+└── prompt-history.md
+
+.specstory/
+└── history/
 ```
+
+The `.cursor/` directory may contain IDE-specific configuration. Project AI guidance files live at the repository root as shown above, consistent with `spec/implementation-plan.md`.
 
 These files provide reusable project context to the AI assistant.
 

@@ -807,6 +807,6 @@ This keeps the specification, implementation, tests, and engineering decisions a
 
 This requirements document represents the baseline requirements for the Support Ticket Management System.
 
-Implementation should begin only after the requirements and subsequent technical specifications have been reviewed.
+The requirements and subsequent technical specifications have been reviewed and approved.
 
-**Status:** Ready for Architecture Specification
+**Status:** Specifications complete — ready for Phase 1 (Backend Project Bootstrap) per `spec/implementation-plan.md`
