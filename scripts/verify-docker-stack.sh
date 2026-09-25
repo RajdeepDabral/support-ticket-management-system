@@ -17,7 +17,7 @@ docker compose build
 echo "==> Starting stack"
 docker compose up -d
 
-echo "==> Waiting for services to become healthy"
+echo "==> Waiting for services to become healthy (up to 5 minutes on first cold start)"
 for _ in $(seq 1 60); do
   POSTGRES_HEALTH="$(docker inspect --format='{{.State.Health.Status}}' support-ticket-postgres 2>/dev/null || echo starting)"
   BACKEND_HEALTH="$(docker inspect --format='{{.State.Health.Status}}' support-ticket-backend 2>/dev/null || echo starting)"

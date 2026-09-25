@@ -20,7 +20,7 @@ Spring Boot backend for the Support Ticket Management System.
 
 **Backend Integration and Acceptance Tests** complete (`SupportTicketBackendAcceptanceTest`).
 
-Frontend is not implemented yet.
+**Frontend** is implemented in `../frontend/` (React + Vite). Full stack runs via `docker compose up --build -d` from the repository root.
 
 ## Technology
 

@@ -212,6 +212,200 @@ None — AI guidance artifacts only.
 
 ---
 
+## Entry 4 — Backend API Implementation
+
+### Date
+
+2026-09-25
+
+### Task
+
+Implement backend REST APIs, state machine, persistence, and integration tests (Phases 1–12).
+
+### Specification
+
+* `spec/create-ticket-api.md` through `spec/ticket-search-filter.md`
+* `spec/state-machine.md`, `spec/database-persistence.md`
+
+### AI Tool
+
+Cursor
+
+### Prompt Intent
+
+Incremental backend tasks: domain model, Flyway migrations, ticket CRUD, status transitions, comments, search/filter, acceptance tests.
+
+### AI Output Summary
+
+Spring Boot 3.3.5 backend with `/api/v1/tickets`, `TicketStateTransitions` allow-list, Testcontainers PostgreSQL integration tests, `SupportTicketBackendAcceptanceTest`.
+
+### Human Review
+
+Verified state machine matches spec (5 valid transitions). Confirmed `UpdateTicketRequestDeserializer` blocks status field on PATCH. No H2 introduced.
+
+### Issue Found
+
+None blocking. API path `/api/v1` diverges from spec `/api` — documented in `docs/decisions/api-versioning.md`.
+
+### Human Decision
+
+Accepted `/api/v1` as stable implementation path. All tests and frontend aligned.
+
+### Tests
+
+`mvn test` (134 tests with Docker/Testcontainers).
+
+### Commit
+
+`ab8d0ae` through `22ade3a`
+
+---
+
+## Entry 5 — Frontend UI Implementation
+
+### Date
+
+2026-09-25
+
+### Task
+
+Implement React frontend: list, create, details/edit, comments, status transitions (Phases 13–17).
+
+### Specification
+
+* `spec/frontend-bootstrap.md`, `spec/ticket-list-ui.md`, `spec/create-ticket-ui.md`
+* `spec/ticket-details-edit-ui.md`, `spec/ticket-comments-ui.md`, `spec/status-transition-ui.md`
+
+### AI Tool
+
+Cursor
+
+### Prompt Intent
+
+Bootstrap Vite/React app, implement ticket management screens with configurable `VITE_API_BASE_URL`.
+
+### AI Output Summary
+
+React 19 + TypeScript + Vite frontend with pages, API client, status action buttons, error handling. 87 Vitest unit tests.
+
+### Human Review
+
+Verified UI calls backend API; frontend validation is supplementary. Status transitions use dedicated endpoint.
+
+### Issue Found
+
+Vitest initially picked up Playwright E2E files in `frontend/e2e/`, causing test failures.
+
+### Human Decision
+
+Added `exclude: ['e2e/**']` to `vitest.config.ts`. E2E runs separately via `npm run test:e2e`.
+
+### Tests
+
+`npm test` (87/87), `npm run build`.
+
+### Commit
+
+`0492cdb` through `123a1f0`
+
+---
+
+## Entry 6 — E2E Acceptance Testing
+
+### Date
+
+2026-09-25
+
+### Task
+
+Add Playwright E2E tests for primary workflow, search/filter, validation, negative transitions, persistence.
+
+### Specification
+
+* `spec/e2e-acceptance-testing.md`, `spec/test-strategy.md`
+
+### AI Tool
+
+Cursor
+
+### Prompt Intent
+
+Single E2E framework (Playwright), real API against Docker backend, unique test data per run.
+
+### AI Output Summary
+
+7 E2E spec files, helpers, `playwright.config.ts` with `workers: 1`, global setup waiting for backend.
+
+### Human Review
+
+Confirmed E2E hits real backend (no mocking). Negative transitions assert 409 via Playwright `request` API.
+
+### Issue Found
+
+Some acceptance criteria (browser refresh, UI 409) not yet automated — documented in QA review.
+
+### Human Decision
+
+Accepted current E2E coverage; backend integration tests cover remaining gaps.
+
+### Tests
+
+`npm run test:e2e` (requires `docker compose up -d postgres backend`).
+
+### Commit
+
+`07d335a`
+
+---
+
+## Entry 7 — Full-Stack Dockerization
+
+### Date
+
+2026-09-25
+
+### Task
+
+Containerize frontend, extend Docker Compose, add nginx reverse proxy, verification script.
+
+### Specification
+
+* `spec/dockerize-full-stack.md`, `spec/architecture.md` §22
+
+### AI Tool
+
+Cursor
+
+### Prompt Intent
+
+Docker Compose with postgres + backend + frontend. Browser uses relative `/api/v1` proxied by nginx.
+
+### AI Output Summary
+
+`frontend/Dockerfile` (Node build + nginx), `nginx.conf`, updated `docker-compose.yml`, `scripts/verify-docker-stack.sh`.
+
+### Human Review
+
+Verified backend JDBC uses `postgres:5432` (not localhost). Frontend build arg `VITE_API_BASE_URL=/api/v1`.
+
+### Issue Found
+
+Backend marked unhealthy on first cold start — healthcheck `start_period: 40s` too short for Spring Boot + Flyway.
+
+### Human Decision
+
+Increased healthcheck `start_period` to 120s, retries to 15, added `restart: unless-stopped`.
+
+### Tests
+
+`docker compose config`, `docker compose up --build -d`, `./scripts/verify-docker-stack.sh`.
+
+### Commit
+
+`77d389f` and follow-up healthcheck fix
+
+---
+
 ## Guidelines
 
 Do not copy every trivial autocomplete interaction into this document.

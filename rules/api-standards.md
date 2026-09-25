@@ -18,6 +18,14 @@ Ticket APIs use:
 
 `/api/tickets`
 
+### Implemented path (versioned)
+
+The running application uses `/api/v1` as the versioned base path:
+
+`/api/v1/tickets`
+
+See `docs/decisions/api-versioning.md`. New code and tests must use `/api/v1` to match the implementation.
+
 ---
 
 ## Ticket APIs

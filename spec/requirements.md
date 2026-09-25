@@ -710,33 +710,33 @@ spec/data-model.md
 
 The solution is considered complete when all of the following are satisfied:
 
-* [ ] Ticket can be created from UI.
-* [ ] Tickets can be listed.
-* [ ] Ticket details can be viewed.
-* [ ] Ticket fields can be updated.
-* [ ] Assignee can be changed.
-* [ ] Comments can be added.
-* [ ] Search works.
-* [ ] Status filter works.
-* [ ] Valid status transitions work.
-* [ ] Invalid status transitions are rejected by backend.
-* [ ] Data survives application restart.
-* [ ] Backend validation works.
-* [ ] UI shows meaningful errors.
-* [ ] State-machine integration tests pass.
-* [ ] No secrets are committed.
+* [x] Ticket can be created from UI.
+* [x] Tickets can be listed.
+* [x] Ticket details can be viewed.
+* [x] Ticket fields can be updated.
+* [x] Assignee can be changed.
+* [x] Comments can be added.
+* [x] Search works.
+* [x] Status filter works.
+* [x] Valid status transitions work.
+* [x] Invalid status transitions are rejected by backend.
+* [x] Data survives application restart.
+* [x] Backend validation works.
+* [x] UI shows meaningful errors.
+* [x] State-machine integration tests pass.
+* [x] No secrets are committed.
 
 In addition, the engineering submission will provide:
 
-* [ ] Specification artefacts.
-* [ ] Reusable AI steering instructions.
-* [ ] Prompt history.
-* [ ] Implementation plan/tasks.
-* [ ] Automated tests.
-* [ ] Docker configuration.
-* [ ] AI review.
-* [ ] Human engineering review.
-* [ ] Git history demonstrating the development process.
+* [x] Specification artefacts.
+* [x] Reusable AI steering instructions.
+* [x] Prompt history.
+* [x] Implementation plan/tasks.
+* [x] Automated tests.
+* [x] Docker configuration.
+* [x] AI review.
+* [x] Human engineering review.
+* [x] Git history demonstrating the development process.
 
 ---
 
@@ -746,20 +746,20 @@ The following table will be progressively updated during implementation.
 
 | Requirement                   | Specification                                   | Implementation | Test Evidence |
 | ----------------------------- | ----------------------------------------------- | -------------- | ------------- |
-| FR-001 Create ticket          | `spec/data-model.md`, `spec/api-contract.md`    | TBD            | TBD           |
-| FR-002 List tickets           | `spec/api-contract.md`                          | TBD            | TBD           |
-| FR-003 Ticket details         | `spec/api-contract.md`                          | TBD            | TBD           |
-| FR-004 Update ticket          | `spec/api-contract.md`                          | TBD            | TBD           |
-| FR-005 Assignee               | `spec/data-model.md`                            | TBD            | TBD           |
-| FR-006 Comments               | `spec/data-model.md`, `spec/api-contract.md`    | TBD            | TBD           |
-| FR-007 Search                 | `spec/api-contract.md`                          | TBD            | TBD           |
-| FR-008 Status filter          | `spec/api-contract.md`                          | TBD            | TBD           |
-| FR-009 State machine          | `spec/state-machine.md`                         | TBD            | TBD           |
-| FR-010 Validation             | `spec/api-contract.md`, `spec/test-strategy.md` | TBD            | TBD           |
-| FR-011 Error handling         | `spec/api-contract.md`                          | TBD            | TBD           |
-| FR-012 PostgreSQL persistence | `spec/data-model.md`, `spec/architecture.md`    | TBD            | TBD           |
-| FR-013 REST API               | `spec/api-contract.md`                          | TBD            | TBD           |
-| FR-014 Frontend               | `spec/ui-flow.md`                               | TBD            | TBD           |
+| FR-001 Create ticket          | `spec/data-model.md`, `spec/api-contract.md`    | `TicketController`, `CreateTicketPage` | `CreateTicketIntegrationTest`, `CreateTicketPage.test.tsx`, `e2e/primary-workflow.spec.ts` |
+| FR-002 List tickets           | `spec/api-contract.md`                          | `TicketsPage`, `TicketList` | `TicketRetrievalIntegrationTest`, `TicketsPage.test.tsx` |
+| FR-003 Ticket details         | `spec/api-contract.md`                          | `TicketDetailsPage` | `TicketRetrievalIntegrationTest`, `TicketDetailsPage.test.tsx` |
+| FR-004 Update ticket          | `spec/api-contract.md`                          | `TicketEditForm`, `PATCH /api/v1/tickets/{id}` | `UpdateTicketIntegrationTest`, `TicketDetailsPage.test.tsx` |
+| FR-005 Assignee               | `spec/data-model.md`                            | `CreateTicketForm`, `TicketEditForm` | `SupportTicketBackendAcceptanceTest.TicketLifecycle` |
+| FR-006 Comments               | `spec/data-model.md`, `spec/api-contract.md`    | `TicketCommentsSection`, `AddCommentForm` | `CreateCommentIntegrationTest`, `TicketCommentsSection.test.tsx`, `e2e/primary-workflow.spec.ts` |
+| FR-007 Search                 | `spec/api-contract.md`                          | `TicketFilters`, `listTickets(keyword)` | `TicketSearchFilterIntegrationTest`, `e2e/search-and-filter.spec.ts` |
+| FR-008 Status filter          | `spec/api-contract.md`                          | `TicketFilters`, `listTickets(status)` | `TicketSearchFilterIntegrationTest`, `SupportTicketBackendAcceptanceTest` |
+| FR-009 State machine          | `spec/state-machine.md`                         | `TicketStateTransitions`, `TicketStateTransitionValidator` | `TicketStateTransitionValidatorTest`, `TicketStatusTransitionIntegrationTest`, `e2e/negative-transitions.spec.ts` |
+| FR-010 Validation             | `spec/api-contract.md`, `spec/test-strategy.md` | `GlobalExceptionHandler`, DTO validation | `SupportTicketBackendAcceptanceTest.Validation`, `e2e/validation.spec.ts` |
+| FR-011 Error handling         | `spec/api-contract.md`                          | `GlobalExceptionHandler`, `ApiError` (frontend) | Controller/integration tests, `TicketStatusActions.test.tsx` |
+| FR-012 PostgreSQL persistence | `spec/data-model.md`, `spec/architecture.md`    | Flyway `V1__*`, JPA repositories | `TicketCommentPersistenceTest`, `e2e/persistence.spec.ts` |
+| FR-013 REST API               | `spec/api-contract.md`                          | `TicketController` (`/api/v1/tickets`) | Full backend test suite, `SupportTicketBackendAcceptanceTest` |
+| FR-014 Frontend               | `spec/ui-flow.md`                               | React app (`frontend/src/`) | 87 Vitest tests, 7 Playwright E2E specs |
 
 ---
 

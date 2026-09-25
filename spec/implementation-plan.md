@@ -1114,29 +1114,29 @@ Additional technology must have a clear engineering reason and must not unnecess
 
 Implementation is complete when:
 
-* [ ] Backend starts successfully.
-* [ ] PostgreSQL starts successfully.
-* [ ] Frontend starts successfully.
-* [ ] Tickets can be created.
-* [ ] Tickets can be listed.
-* [ ] Ticket details can be viewed.
-* [ ] Ticket fields can be updated.
-* [ ] Assignee can be changed.
-* [ ] Comments can be added.
-* [ ] Search works.
-* [ ] Status filtering works.
-* [ ] Valid state transitions work.
-* [ ] Invalid state transitions are rejected.
-* [ ] Backend validation works.
-* [ ] UI displays meaningful errors.
-* [ ] Data persists.
-* [ ] Tests pass.
-* [ ] Docker setup works.
-* [ ] No secrets are committed.
-* [ ] AI review has been performed.
-* [ ] Human review has been performed.
-* [ ] At least one genuine AI issue has been identified and corrected if encountered.
-* [ ] README is complete.
+* [x] Backend starts successfully.
+* [x] PostgreSQL starts successfully.
+* [x] Frontend starts successfully.
+* [x] Tickets can be created.
+* [x] Tickets can be listed.
+* [x] Ticket details can be viewed.
+* [x] Ticket fields can be updated.
+* [x] Assignee can be changed.
+* [x] Comments can be added.
+* [x] Search works.
+* [x] Status filtering works.
+* [x] Valid state transitions work.
+* [x] Invalid state transitions are rejected.
+* [x] Backend validation works.
+* [x] UI displays meaningful errors.
+* [x] Data persists.
+* [x] Tests pass.
+* [x] Docker setup works.
+* [x] No secrets are committed.
+* [x] AI review has been performed.
+* [x] Human review has been performed.
+* [x] At least one genuine AI issue has been identified and corrected if encountered.
+* [x] README is complete.
 
 ---
 

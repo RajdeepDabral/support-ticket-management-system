@@ -148,6 +148,79 @@ support-ticket-management-ai-sdd/
 └── rules/                # Engineering rules
 ```
 
+## API Overview
+
+Base path: `/api/v1` (see `docs/decisions/api-versioning.md`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | `/api/v1/tickets` | Create ticket |
+| GET | `/api/v1/tickets` | List, search (`keyword`), filter (`status`) |
+| GET | `/api/v1/tickets/{id}` | Ticket details with comments |
+| PATCH | `/api/v1/tickets/{id}` | Update fields (not status) |
+| PATCH | `/api/v1/tickets/{id}/status` | Status transition |
+| POST | `/api/v1/tickets/{id}/comments` | Add comment |
+
+## State Machine
+
+```text
+OPEN ──────────→ IN_PROGRESS ──→ RESOLVED ──→ CLOSED
+ │                    │
+ └→ CANCELLED ←───────┘
+```
+
+Valid transitions: OPEN→IN_PROGRESS, OPEN→CANCELLED, IN_PROGRESS→RESOLVED, IN_PROGRESS→CANCELLED, RESOLVED→CLOSED. All others return HTTP 409.
+
+## AI-Assisted Development
+
+This project follows Spec Driven Development:
+
+```text
+Requirement → Specification → Plan → Implementation → Testing → Review → Fix
+```
+
+| Artifact | Location |
+|----------|----------|
+| Engineering rules | `rules/` |
+| Review commands | `commands/` |
+| Documentation skill | `skills/documentation/` |
+| Prompt history | `docs/prompt-history.md` |
+| Session history | `.specstory/history/` |
+| AI review | `docs/ai-review.md` |
+| Human review | `docs/human-review.md` |
+
+### Known AI Corrections
+
+1. Rules location: canonical at repo root, not `.cursor/` (see prompt-history Entry 1)
+2. Vitest/E2E collision: excluded `e2e/**` from Vitest config
+3. Docker healthcheck: increased `start_period` to 120s for Spring Boot cold start
+
+## Docker Troubleshooting
+
+If `support-ticket-backend` is **unhealthy** after `docker compose up`:
+
+```bash
+# 1. Check backend logs
+sudo docker compose logs backend
+
+# 2. Wait longer on first cold start (Flyway + JVM can take 2–3 minutes)
+sudo docker compose ps
+
+# 3. Rebuild and restart
+sudo docker compose down
+sudo docker compose up --build -d
+
+# 4. If Flyway schema conflict from old volume
+sudo docker compose down -v
+sudo docker compose up --build -d
+```
+
+Verify full workflow:
+
+```bash
+./scripts/verify-docker-stack.sh
+```
+
 ## Specifications
 
 | Document | Path |

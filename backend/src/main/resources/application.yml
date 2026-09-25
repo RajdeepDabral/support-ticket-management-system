@@ -9,6 +9,8 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:support}
     password: ${SPRING_DATASOURCE_PASSWORD:support}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
   jpa:
     open-in-view: false
     hibernate:

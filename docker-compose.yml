@@ -20,6 +20,7 @@ services:
     build:
       context: ./backend
     container_name: support-ticket-backend
+    restart: unless-stopped
     ports:
       - "${SERVER_PORT:-8080}:8080"
     environment:
@@ -31,11 +32,11 @@ services:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/api/v1/tickets || exit 1"]
-      interval: 10s
-      timeout: 5s
-      start_period: 40s
-      retries: 10
+      test: ["CMD-SHELL", "curl -sf --max-time 5 http://127.0.0.1:8080/api/v1/tickets || exit 1"]
+      interval: 15s
+      timeout: 10s
+      start_period: 120s
+      retries: 15
 
   frontend:
     build:

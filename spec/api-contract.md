@@ -56,6 +56,16 @@ Ticket resources are exposed under:
 
 No API version prefix is required for this assignment.
 
+### Implementation note (2026-09-25)
+
+The implemented and tested API uses version prefix `/api/v1`:
+
+```text
+/api/v1/tickets
+```
+
+This is a deliberate, documented deviation. See `docs/decisions/api-versioning.md`. Request/response shapes, validation rules, and status codes in this contract apply unchanged; only the path prefix differs.
+
 ---
 
 # 4. Ticket Resource

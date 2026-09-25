@@ -1,0 +1,12 @@
+{"timestamp":"2026-09-25T08:00:00Z","phase":"requirement","summary":"Initialized repository for spec-driven development. Created root structure, README, .gitignore, LICENSE.","commit":"33f782b"}
+{"timestamp":"2026-09-25T09:00:00Z","phase":"specification","summary":"Authored requirements.md, architecture.md, data-model.md, api-contract.md, state-machine.md, ui-flow.md, test-strategy.md.","commit":"1a7d599"}
+{"timestamp":"2026-09-25T10:00:00Z","phase":"plan","summary":"Created implementation-plan.md with 21 phases. Added rules/, commands/, skills/ AI guidance artifacts.","commit":"b0584f7"}
+{"timestamp":"2026-09-25T11:00:00Z","phase":"implementation","summary":"Backend bootstrap: Spring Boot 3.3.5, Java 21, Flyway, PostgreSQL. Domain model and repositories.","commit":"1e0caf1"}
+{"timestamp":"2026-09-25T12:00:00Z","phase":"implementation","summary":"Ticket state machine: TicketStateTransitions allow-list, TicketStateTransitionValidator, 5 valid transitions.","commit":"8e5ed7f"}
+{"timestamp":"2026-09-25T13:00:00Z","phase":"implementation","summary":"REST APIs: create, retrieve, update, status transition, comments, search/filter. All at /api/v1/tickets.","commit":"ab8d0ae"}
+{"timestamp":"2026-09-25T14:00:00Z","phase":"testing","summary":"Backend integration and acceptance tests with Testcontainers PostgreSQL. SupportTicketBackendAcceptanceTest.","commit":"22ade3a"}
+{"timestamp":"2026-09-25T15:00:00Z","phase":"implementation","summary":"Frontend bootstrap: React 19, TypeScript, Vite, configurable VITE_API_BASE_URL.","commit":"0492cdb"}
+{"timestamp":"2026-09-25T16:00:00Z","phase":"implementation","summary":"Frontend UI: ticket list, create, details/edit, comments, status transition actions.","commit":"131daff"}
+{"timestamp":"2026-09-25T17:00:00Z","phase":"testing","summary":"Playwright E2E: primary workflow, search/filter, validation, negative transitions, persistence.","commit":"07d335a"}
+{"timestamp":"2026-09-25T18:00:00Z","phase":"implementation","summary":"Full-stack Docker: frontend nginx container, compose orchestration, verify script.","commit":"77d389f"}
+{"timestamp":"2026-09-25T19:00:00Z","phase":"review","summary":"AI and human review completed. Fixed Docker healthcheck timing. Updated traceability and acceptance checklists.","commit":"pending"}
