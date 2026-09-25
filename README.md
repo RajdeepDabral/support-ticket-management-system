@@ -1,43 +1,151 @@
-# Support Ticket Management AI SDD
+# Support Ticket Management System
 
-Specification-driven development project for AI-powered support ticket management.
+Specification-driven support ticket management application with a Spring Boot backend, React frontend, and PostgreSQL database.
 
-## Current Phase
+## Technology Stack
 
-The project has completed the **specification and AI-guidance phase**, and **Phase 1 — Backend Project Bootstrap**.
+- **Backend:** Java 21, Spring Boot 3.3.5, Maven, PostgreSQL, Flyway
+- **Frontend:** React 19, TypeScript, Vite, React Router
+- **API:** REST at `/api/v1/tickets`
+- **Containerization:** Docker Compose (PostgreSQL + backend + frontend)
 
-Backend business functionality, frontend implementation, and full Docker-based end-to-end verification are **not** started yet.
+## Quick Start (Docker)
 
-Next step per `spec/implementation-plan.md`: **Phase 2 — Database and Persistence**.
+Run the complete application stack:
 
-## SDD Workflow Status
+```bash
+docker compose up --build -d
+```
 
-| Phase | Status |
-|-------|--------|
-| Requirement | Complete — `spec/requirements.md` |
-| Specification | Complete — `spec/architecture.md`, `data-model.md`, `api-contract.md`, `state-machine.md`, `ui-flow.md`, `test-strategy.md` |
-| Plan / Tasks | Complete — `spec/implementation-plan.md` |
-| Implementation | In progress — backend bootstrap complete |
-| Testing | In progress — bootstrap tests added (require Docker) |
-| Review | Not started |
-| Fix | Not started |
+Open the UI at [http://localhost:3000](http://localhost:3000).
+
+The frontend nginx container serves the React app and proxies `/api/v1` to the backend service. The browser uses relative API URLs (`/api/v1`), so it never needs to resolve Docker-internal hostnames.
+
+Stop the stack:
+
+```bash
+docker compose down
+```
+
+Stop without deleting persisted data (PostgreSQL volume is preserved):
+
+```bash
+docker compose stop
+```
+
+Remove containers and volumes (deletes database data):
+
+```bash
+docker compose down -v
+```
+
+Verify the full Dockerized workflow (health checks, API, persistence after restart):
+
+```bash
+./scripts/verify-docker-stack.sh
+```
+
+## Docker Architecture
+
+```text
+Browser → http://localhost:3000
+              │
+              ▼
+┌─────────────────────────────┐
+│  frontend (nginx)           │
+│  - serves React static files│
+│  - proxies /api/v1 → backend│
+└──────────────┬──────────────┘
+               │
+               ▼
+┌─────────────────────────────┐
+│  backend (Spring Boot)      │
+│  - Flyway migrations        │
+│  - REST API on :8080        │
+└──────────────┬──────────────┘
+               │
+               ▼
+┌─────────────────────────────┐
+│  postgres (PostgreSQL 16) │
+│  - persistent volume        │
+└─────────────────────────────┘
+```
+
+### Ports
+
+| Service  | Container port | Host port (default) |
+|----------|----------------|---------------------|
+| frontend | 80             | 3000                |
+| backend  | 8080           | 8080                |
+| postgres | 5432           | 5433                |
+
+### Environment
+
+Copy `.env.example` to `.env` to override defaults. See `frontend/.env.example` for host-based frontend development settings.
+
+## Local Development (without Docker frontend)
+
+### 1. Start PostgreSQL and backend
+
+```bash
+docker compose up -d postgres backend
+```
+
+### 2. Run backend on host (alternative)
+
+```bash
+docker compose up -d postgres
+cd backend
+mvn spring-boot:run
+```
+
+### 3. Run frontend on host
+
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm run dev
+```
+
+Set `VITE_API_BASE_URL=http://localhost:8080/api/v1` in `frontend/.env` when the backend is reachable on the host.
+
+## Tests
+
+### Backend
+
+```bash
+cd backend
+mvn test
+```
+
+Requires Docker for Testcontainers PostgreSQL.
+
+### Frontend
+
+```bash
+cd frontend
+npm test
+npm run build
+```
+
+### End-to-end (Playwright)
+
+```bash
+docker compose up -d postgres backend
+cd frontend
+npm run test:e2e
+```
 
 ## Repository Structure
 
 ```
 support-ticket-management-ai-sdd/
-├── README.md
-├── LICENSE
-├── .gitignore
-├── spec/                 # Approved specifications
-├── rules/                # Cursor AI rules (Java/Spring Boot, testing, API standards)
-├── commands/             # Cursor commands (review-code, review-spec, generate-tests)
-├── skills/               # Cursor skills (documentation)
-├── docs/                 # Prompt history and review documentation
-├── .specstory/history/   # AI session history (Specstory)
-├── .cursor/              # Cursor IDE pointer to project AI guidance
-├── backend/              # Spring Boot bootstrap (Phase 1 complete)
-└── frontend/             # Scaffold only — implementation not started
+├── docker-compose.yml
+├── backend/              # Spring Boot API
+├── frontend/             # React + Vite UI
+├── spec/                 # Specifications
+└── rules/                # Engineering rules
 ```
 
 ## Specifications
@@ -46,26 +154,6 @@ support-ticket-management-ai-sdd/
 |----------|------|
 | Requirements | `spec/requirements.md` |
 | Architecture | `spec/architecture.md` |
-| Data Model | `spec/data-model.md` |
 | API Contract | `spec/api-contract.md` |
 | State Machine | `spec/state-machine.md` |
-| UI Flow | `spec/ui-flow.md` |
-| Test Strategy | `spec/test-strategy.md` |
-| Implementation Plan | `spec/implementation-plan.md` |
-
-## AI-Assisted Development Artifacts
-
-| Artifact | Location |
-|----------|----------|
-| Engineering rules | `rules/java-springboot.md`, `rules/testing.md`, `rules/api-standards.md` |
-| Review commands | `commands/review-code.md`, `commands/review-spec.md`, `commands/generate-tests.md` |
-| Documentation skill | `skills/documentation/SKILL.md` |
-| Prompt history | `docs/prompt-history.md` |
-| Session history | `.specstory/history/` |
-
-## Technology Stack (Planned)
-
-- **Backend:** Java 21, Spring Boot, PostgreSQL
-- **Frontend:** React / Next.js or equivalent
-- **API:** REST
-- **Containerization:** Docker Compose (`docker-compose.yml` — PostgreSQL + backend)
+| Docker | `spec/dockerize-full-stack.md` |

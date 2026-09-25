@@ -65,10 +65,18 @@ Integration tests use Testcontainers with PostgreSQL. Docker must be available.
 
 ## Docker
 
-Build and run backend + PostgreSQL:
+Build and run the full stack (PostgreSQL + backend + frontend):
 
 ```bash
-docker compose up --build
+docker compose up --build -d
+```
+
+Open the UI at [http://localhost:3000](http://localhost:3000).
+
+Run backend + PostgreSQL only:
+
+```bash
+docker compose up -d postgres backend
 ```
 
 ## Package Structure
