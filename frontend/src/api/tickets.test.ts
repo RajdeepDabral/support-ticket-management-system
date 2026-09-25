@@ -1,16 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { apiClient } from './client';
-import { createTicket, listTickets } from './tickets';
+import { createTicket, getTicket, listTickets, updateTicket } from './tickets';
 
 vi.mock('./client', () => ({
   apiClient: {
     get: vi.fn(),
     post: vi.fn(),
+    patch: vi.fn(),
   },
 }));
 
 const mockGet = vi.mocked(apiClient.get);
 const mockPost = vi.mocked(apiClient.post);
+const mockPatch = vi.mocked(apiClient.patch);
 
 describe('listTickets', () => {
   afterEach(() => {
@@ -71,6 +73,63 @@ describe('createTicket', () => {
       description: 'User cannot login.',
       priority: 'HIGH',
       assignee: 'john.doe',
+    });
+  });
+});
+
+describe('getTicket', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('requests GET /tickets/{ticketId}', async () => {
+    mockGet.mockResolvedValue({
+      id: 42,
+      title: 'Unable to login',
+      description: 'User cannot login.',
+      priority: 'HIGH',
+      status: 'OPEN',
+      assignee: 'john.doe',
+      createdAt: '2026-09-25T08:00:00Z',
+      updatedAt: '2026-09-25T08:00:00Z',
+      comments: [],
+    });
+
+    await getTicket(42);
+
+    expect(mockGet).toHaveBeenCalledWith('/tickets/42');
+  });
+});
+
+describe('updateTicket', () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('sends PATCH /tickets/{ticketId} with only editable fields', async () => {
+    mockPatch.mockResolvedValue({
+      id: 42,
+      title: 'Updated title',
+      description: 'Updated description.',
+      priority: 'CRITICAL',
+      status: 'OPEN',
+      assignee: 'jane.doe',
+      createdAt: '2026-09-25T08:00:00Z',
+      updatedAt: '2026-09-25T09:00:00Z',
+    });
+
+    await updateTicket(42, {
+      title: 'Updated title',
+      description: 'Updated description.',
+      priority: 'CRITICAL',
+      assignee: 'jane.doe',
+    });
+
+    expect(mockPatch).toHaveBeenCalledWith('/tickets/42', {
+      title: 'Updated title',
+      description: 'Updated description.',
+      priority: 'CRITICAL',
+      assignee: 'jane.doe',
     });
   });
 });

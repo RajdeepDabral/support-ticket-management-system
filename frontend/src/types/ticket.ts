@@ -32,6 +32,25 @@ export interface ListTicketsParams {
   status?: TicketStatus;
 }
 
+export interface Comment {
+  id: number;
+  ticketId: number;
+  content: string;
+  author: string;
+  createdAt: string;
+}
+
+export interface TicketDetail extends Ticket {
+  comments: Comment[];
+}
+
+export interface UpdateTicketRequest {
+  title?: string;
+  description?: string;
+  priority?: TicketPriority;
+  assignee?: string;
+}
+
 export const TICKET_PRIORITY_OPTIONS: TicketPriority[] = [
   'LOW',
   'MEDIUM',
