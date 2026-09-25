@@ -12,7 +12,7 @@ public interface TicketService {
 
     TicketResponse createTicket(CreateTicketRequest request);
 
-    List<TicketResponse> listTickets();
+    List<TicketResponse> listTickets(String keyword, TicketStatus status);
 
     TicketDetailResponse getTicket(Long ticketId);
 

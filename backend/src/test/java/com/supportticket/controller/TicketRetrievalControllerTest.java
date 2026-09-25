@@ -1,5 +1,6 @@
 package com.supportticket.controller;
 
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,7 +45,7 @@ class TicketRetrievalControllerTest {
     @Test
     void listTickets_returns200WithTickets() throws Exception {
         OffsetDateTime now = OffsetDateTime.parse("2026-09-25T08:00:00Z");
-        when(ticketService.listTickets()).thenReturn(List.of(
+        when(ticketService.listTickets(isNull(), isNull())).thenReturn(List.of(
                 new TicketResponse(
                         1001L,
                         "Unable to login",
@@ -66,12 +67,12 @@ class TicketRetrievalControllerTest {
                 .andExpect(jsonPath("$[0].assignee").value("john.doe"))
                 .andExpect(jsonPath("$[0].createdAt").value("2026-09-25T08:00:00Z"));
 
-        verify(ticketService).listTickets();
+        verify(ticketService).listTickets(isNull(), isNull());
     }
 
     @Test
     void listTickets_returns200WithEmptyArrayWhenNoTicketsExist() throws Exception {
-        when(ticketService.listTickets()).thenReturn(List.of());
+        when(ticketService.listTickets(isNull(), isNull())).thenReturn(List.of());
 
         mockMvc.perform(get(TICKETS_URL))
                 .andExpect(status().isOk())

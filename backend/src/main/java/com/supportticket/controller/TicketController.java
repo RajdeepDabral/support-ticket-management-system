@@ -2,6 +2,7 @@ package com.supportticket.controller;
 
 import java.util.List;
 
+import com.supportticket.domain.TicketStatus;
 import com.supportticket.dto.CommentResponse;
 import com.supportticket.dto.CreateCommentRequest;
 import com.supportticket.dto.CreateTicketRequest;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -37,8 +39,10 @@ public class TicketController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TicketResponse>> listTickets() {
-        return ResponseEntity.ok(ticketService.listTickets());
+    public ResponseEntity<List<TicketResponse>> listTickets(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) TicketStatus status) {
+        return ResponseEntity.ok(ticketService.listTickets(keyword, status));
     }
 
     @GetMapping("/{ticketId}")

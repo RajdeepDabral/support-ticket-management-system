@@ -60,8 +60,8 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TicketResponse> listTickets() {
-        return ticketRepository.findAll().stream()
+    public List<TicketResponse> listTickets(String keyword, TicketStatus status) {
+        return ticketRepository.search(normalizeKeyword(keyword), status).stream()
                 .map(ticketMapper::toResponse)
                 .toList();
     }
@@ -146,6 +146,14 @@ public class TicketServiceImpl implements TicketService {
             }
             ticket.setAssignee(assignee.trim());
         });
+    }
+
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null) {
+            return null;
+        }
+        String trimmed = keyword.trim();
+        return trimmed.isEmpty() ? null : trimmed;
     }
 
     private String formatViolations(java.util.Set<ConstraintViolation<CreateTicketRequest>> violations) {

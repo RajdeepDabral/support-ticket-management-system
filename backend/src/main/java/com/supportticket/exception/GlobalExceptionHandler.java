@@ -18,6 +18,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -56,6 +57,30 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST.value(),
                 VALIDATION_ERROR,
                 message,
+                request.getRequestURI(),
+                null));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ApiErrorResponse> handleTypeMismatch(
+            MethodArgumentTypeMismatchException exception,
+            HttpServletRequest request) {
+        if (exception.getRequiredType() != null
+                && TicketStatus.class.isAssignableFrom(exception.getRequiredType())) {
+            return ResponseEntity.badRequest().body(new ApiErrorResponse(
+                    OffsetDateTime.now(),
+                    HttpStatus.BAD_REQUEST.value(),
+                    VALIDATION_ERROR,
+                    "Status must be one of OPEN, IN_PROGRESS, RESOLVED, CLOSED, CANCELLED",
+                    request.getRequestURI(),
+                    null));
+        }
+
+        return ResponseEntity.badRequest().body(new ApiErrorResponse(
+                OffsetDateTime.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                VALIDATION_ERROR,
+                "Request validation failed.",
                 request.getRequestURI(),
                 null));
     }
