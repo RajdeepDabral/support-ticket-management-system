@@ -7,6 +7,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.supportticket.domain.TicketPriority;
+import com.supportticket.domain.TicketStatus;
 import com.supportticket.dto.ApiErrorResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -118,9 +119,13 @@ public class GlobalExceptionHandler {
 
         Throwable cause = exception.getCause();
         if (cause instanceof InvalidFormatException invalidFormatException
-                && invalidFormatException.getTargetType() != null
-                && TicketPriority.class.isAssignableFrom(invalidFormatException.getTargetType())) {
-            return "Priority must be one of LOW, MEDIUM, HIGH, CRITICAL";
+                && invalidFormatException.getTargetType() != null) {
+            if (TicketPriority.class.isAssignableFrom(invalidFormatException.getTargetType())) {
+                return "Priority must be one of LOW, MEDIUM, HIGH, CRITICAL";
+            }
+            if (TicketStatus.class.isAssignableFrom(invalidFormatException.getTargetType())) {
+                return "Status must be one of OPEN, IN_PROGRESS, RESOLVED, CLOSED, CANCELLED";
+            }
         }
 
         if (cause instanceof JsonMappingException jsonMappingException

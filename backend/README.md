@@ -12,7 +12,9 @@ Spring Boot backend for the Support Ticket Management System.
 **List Tickets and View Ticket Details** complete (`GET /api/v1/tickets`, `GET /api/v1/tickets/{ticketId}`).
 **Update Ticket** complete (`PATCH /api/v1/tickets/{ticketId}`).
 
-Status transition, comment creation, search, filtering, and frontend are not implemented yet.
+**Status Transition** complete (`PATCH /api/v1/tickets/{ticketId}/status`).
+
+Comment creation, search, filtering, and frontend are not implemented yet.
 
 ## Technology
 

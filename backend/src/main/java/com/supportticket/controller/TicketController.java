@@ -6,6 +6,7 @@ import com.supportticket.dto.CreateTicketRequest;
 import com.supportticket.dto.TicketDetailResponse;
 import com.supportticket.dto.TicketResponse;
 import com.supportticket.dto.UpdateTicketRequest;
+import com.supportticket.dto.UpdateTicketStatusRequest;
 import com.supportticket.service.TicketService;
 
 import jakarta.validation.Valid;
@@ -51,6 +52,14 @@ public class TicketController {
             @PathVariable Long ticketId,
             @RequestBody UpdateTicketRequest request) {
         TicketResponse response = ticketService.updateTicket(ticketId, request.toCommand());
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{ticketId}/status")
+    public ResponseEntity<TicketResponse> transitionTicketStatus(
+            @PathVariable Long ticketId,
+            @Valid @RequestBody UpdateTicketStatusRequest request) {
+        TicketResponse response = ticketService.transitionTicketStatus(ticketId, request.getStatus());
         return ResponseEntity.ok(response);
     }
 }
