@@ -9,6 +9,7 @@ import com.supportticket.exception.InvalidRequestException;
 import com.supportticket.exception.TicketNotFoundException;
 import com.supportticket.mapper.TicketMapper;
 import com.supportticket.repository.TicketRepository;
+import com.supportticket.state.TicketStateTransitionValidator;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -22,11 +23,17 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final TicketMapper ticketMapper;
     private final Validator validator;
+    private final TicketStateTransitionValidator stateTransitionValidator;
 
-    public TicketServiceImpl(TicketRepository ticketRepository, TicketMapper ticketMapper, Validator validator) {
+    public TicketServiceImpl(
+            TicketRepository ticketRepository,
+            TicketMapper ticketMapper,
+            Validator validator,
+            TicketStateTransitionValidator stateTransitionValidator) {
         this.ticketRepository = ticketRepository;
         this.ticketMapper = ticketMapper;
         this.validator = validator;
+        this.stateTransitionValidator = stateTransitionValidator;
     }
 
     @Override
@@ -68,6 +75,22 @@ public class TicketServiceImpl implements TicketService {
         if (ticket.getStatus() != statusBeforeUpdate) {
             throw new InvalidRequestException("Status cannot be changed through ticket update.");
         }
+
+        return ticketMapper.toResponse(ticketRepository.save(ticket));
+    }
+
+    @Override
+    @Transactional
+    public TicketResponse transitionTicketStatus(Long ticketId, TicketStatus requestedStatus) {
+        if (requestedStatus == null) {
+            throw new InvalidRequestException("Status is required.");
+        }
+
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new TicketNotFoundException(ticketId));
+
+        stateTransitionValidator.validate(ticket.getStatus(), requestedStatus);
+        ticket.setStatus(requestedStatus);
 
         return ticketMapper.toResponse(ticketRepository.save(ticket));
     }

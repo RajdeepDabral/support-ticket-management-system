@@ -19,6 +19,7 @@ import com.supportticket.exception.InvalidRequestException;
 import com.supportticket.exception.TicketNotFoundException;
 import com.supportticket.mapper.TicketMapper;
 import com.supportticket.repository.TicketRepository;
+import com.supportticket.state.TicketStateTransitionValidator;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -39,12 +40,14 @@ class TicketServiceImplTest {
 
     private final TicketMapper ticketMapper = new TicketMapper();
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final TicketStateTransitionValidator stateTransitionValidator = new TicketStateTransitionValidator();
 
     private TicketServiceImpl ticketService;
 
     @BeforeEach
     void setUp() {
-        ticketService = new TicketServiceImpl(ticketRepository, ticketMapper, validator);
+        ticketService = new TicketServiceImpl(
+                ticketRepository, ticketMapper, validator, stateTransitionValidator);
     }
 
     @Test
