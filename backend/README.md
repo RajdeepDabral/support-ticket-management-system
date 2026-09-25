@@ -6,8 +6,9 @@ Spring Boot backend for the Support Ticket Management System.
 
 **Phase 1 — Project Bootstrap** complete.
 **Phase 2 — Database and Persistence** complete.
+**Ticket Domain and Business Service** complete.
 
-Business services, state machine, REST APIs, and frontend are not implemented yet.
+State machine, REST APIs, comments, search, and frontend are not implemented yet.
 
 ## Technology
 
@@ -64,9 +65,12 @@ docker compose up --build
 com.supportticket
 ├── domain          # Ticket, Comment, TicketStatus, TicketPriority
 ├── repository      # TicketRepository, CommentRepository
+├── service         # TicketService (create, get, update)
+├── dto             # CreateTicketRequest, UpdateTicketCommand, TicketResponse
+├── mapper          # TicketMapper
+├── exception       # TicketNotFoundException, InvalidRequestException
 ├── config
 ├── controller
-├── service
 ├── dto
 ├── exception
 └── mapper
