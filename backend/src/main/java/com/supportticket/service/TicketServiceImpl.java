@@ -61,7 +61,16 @@ public class TicketServiceImpl implements TicketService {
     @Override
     @Transactional(readOnly = true)
     public List<TicketResponse> listTickets(String keyword, TicketStatus status) {
-        return ticketRepository.search(normalizeKeyword(keyword), status).stream()
+        String normalizedKeyword = normalizeKeyword(keyword);
+        List<Ticket> tickets;
+        if (normalizedKeyword == null) {
+            tickets = status == null
+                    ? ticketRepository.findAll()
+                    : ticketRepository.findByStatus(status);
+        } else {
+            tickets = ticketRepository.searchByKeyword(normalizedKeyword, status);
+        }
+        return tickets.stream()
                 .map(ticketMapper::toResponse)
                 .toList();
     }

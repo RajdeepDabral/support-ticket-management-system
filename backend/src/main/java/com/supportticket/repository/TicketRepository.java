@@ -11,14 +11,15 @@ import org.springframework.data.repository.query.Param;
 
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
+    List<Ticket> findByStatus(TicketStatus status);
+
     @Query("""
             SELECT t FROM Ticket t
-            WHERE (:keyword IS NULL
-                OR LOWER(t.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            WHERE (LOWER(t.title) LIKE LOWER(CONCAT('%', :keyword, '%'))
                 OR LOWER(t.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
             AND (:status IS NULL OR t.status = :status)
             """)
-    List<Ticket> search(
+    List<Ticket> searchByKeyword(
             @Param("keyword") String keyword,
             @Param("status") TicketStatus status);
 }

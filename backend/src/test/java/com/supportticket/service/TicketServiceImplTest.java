@@ -138,7 +138,7 @@ class TicketServiceImplTest {
     void listTickets_returnsAllTickets() {
         Ticket first = persistedTicket(1L, TicketStatus.OPEN);
         Ticket second = persistedTicket(2L, TicketStatus.RESOLVED);
-        when(ticketRepository.search(null, null)).thenReturn(List.of(first, second));
+        when(ticketRepository.findAll()).thenReturn(List.of(first, second));
 
         List<TicketResponse> responses = ticketService.listTickets(null, null);
 
@@ -149,7 +149,7 @@ class TicketServiceImplTest {
 
     @Test
     void listTickets_returnsEmptyListWhenNoTicketsExist() {
-        when(ticketRepository.search(null, null)).thenReturn(List.of());
+        when(ticketRepository.findAll()).thenReturn(List.of());
 
         assertThat(ticketService.listTickets(null, null)).isEmpty();
     }
@@ -157,7 +157,7 @@ class TicketServiceImplTest {
     @Test
     void listTickets_passesTrimmedKeywordAndStatusToRepository() {
         Ticket ticket = persistedTicket(1L, TicketStatus.OPEN);
-        when(ticketRepository.search("login", TicketStatus.OPEN)).thenReturn(List.of(ticket));
+        when(ticketRepository.searchByKeyword("login", TicketStatus.OPEN)).thenReturn(List.of(ticket));
 
         List<TicketResponse> responses = ticketService.listTickets("  login  ", TicketStatus.OPEN);
 
@@ -168,7 +168,7 @@ class TicketServiceImplTest {
     @Test
     void listTickets_treatsBlankKeywordAsNoFilter() {
         Ticket ticket = persistedTicket(1L, TicketStatus.OPEN);
-        when(ticketRepository.search(null, null)).thenReturn(List.of(ticket));
+        when(ticketRepository.findAll()).thenReturn(List.of(ticket));
 
         assertThat(ticketService.listTickets("   ", null)).hasSize(1);
         assertThat(ticketService.listTickets("", null)).hasSize(1);
