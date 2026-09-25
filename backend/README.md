@@ -5,8 +5,9 @@ Spring Boot backend for the Support Ticket Management System.
 ## Status
 
 **Phase 1 — Project Bootstrap** complete.
+**Phase 2 — Database and Persistence** complete.
 
-Business functionality (tickets, comments, state machine, REST APIs) is not implemented yet.
+Business services, state machine, REST APIs, and frontend are not implemented yet.
 
 ## Technology
 
@@ -61,12 +62,21 @@ docker compose up --build
 
 ```text
 com.supportticket
+├── domain          # Ticket, Comment, TicketStatus, TicketPriority
+├── repository      # TicketRepository, CommentRepository
 ├── config
 ├── controller
 ├── service
-├── domain
-├── repository
 ├── dto
 ├── exception
 └── mapper
 ```
+
+## Database Migrations
+
+Flyway migrations live in `src/main/resources/db/migration/`.
+
+Current schema:
+
+* `ticket` — support tickets
+* `comment` — comments linked to tickets via `ticket_id` foreign key
