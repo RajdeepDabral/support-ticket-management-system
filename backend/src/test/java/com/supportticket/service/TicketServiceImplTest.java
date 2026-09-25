@@ -236,6 +236,68 @@ class TicketServiceImplTest {
     }
 
     @Test
+    void updateTicket_updatesMultipleFieldsTogether() {
+        Ticket ticket = persistedTicket(1L, TicketStatus.OPEN);
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        TicketResponse response = ticketService.updateTicket(
+                1L,
+                UpdateTicketCommand.builder()
+                        .title("Updated title")
+                        .description("Updated description")
+                        .priority(TicketPriority.HIGH)
+                        .assignee("updated.assignee")
+                        .build());
+
+        assertThat(response.getTitle()).isEqualTo("Updated title");
+        assertThat(response.getDescription()).isEqualTo("Updated description");
+        assertThat(response.getPriority()).isEqualTo(TicketPriority.HIGH);
+        assertThat(response.getAssignee()).isEqualTo("updated.assignee");
+    }
+
+    @Test
+    void updateTicket_partialUpdatePreservesOmittedFields() {
+        Ticket ticket = persistedTicket(1L, TicketStatus.IN_PROGRESS);
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        TicketResponse response = ticketService.updateTicket(
+                1L,
+                UpdateTicketCommand.builder().priority(TicketPriority.CRITICAL).build());
+
+        assertThat(response.getTitle()).isEqualTo("Original title");
+        assertThat(response.getDescription()).isEqualTo("Original description");
+        assertThat(response.getPriority()).isEqualTo(TicketPriority.CRITICAL);
+        assertThat(response.getAssignee()).isEqualTo("original.assignee");
+        assertThat(response.getStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
+    }
+
+    @Test
+    void updateTicket_preservesCreatedAt() {
+        Ticket ticket = persistedTicket(1L, TicketStatus.OPEN);
+        OffsetDateTime createdAt = ticket.getCreatedAt();
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ticketService.updateTicket(1L, UpdateTicketCommand.builder().title("Updated title").build());
+
+        assertThat(ticket.getCreatedAt()).isEqualTo(createdAt);
+    }
+
+    @Test
+    void updateTicket_rejectsBlankDescription() {
+        Ticket ticket = persistedTicket(1L, TicketStatus.OPEN);
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+
+        assertThatThrownBy(() -> ticketService.updateTicket(
+                1L,
+                UpdateTicketCommand.builder().description("   ").build()))
+                .isInstanceOf(InvalidRequestException.class)
+                .hasMessageContaining("Description must not be blank");
+    }
+
+    @Test
     void updateTicket_doesNotChangeStatus() {
         Ticket ticket = persistedTicket(1L, TicketStatus.RESOLVED);
         when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));

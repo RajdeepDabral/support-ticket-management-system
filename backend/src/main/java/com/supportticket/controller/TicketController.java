@@ -5,6 +5,7 @@ import java.util.List;
 import com.supportticket.dto.CreateTicketRequest;
 import com.supportticket.dto.TicketDetailResponse;
 import com.supportticket.dto.TicketResponse;
+import com.supportticket.dto.UpdateTicketRequest;
 import com.supportticket.service.TicketService;
 
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,5 +44,13 @@ public class TicketController {
     public ResponseEntity<TicketResponse> createTicket(@Valid @RequestBody CreateTicketRequest request) {
         TicketResponse response = ticketService.createTicket(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PatchMapping("/{ticketId}")
+    public ResponseEntity<TicketResponse> updateTicket(
+            @PathVariable Long ticketId,
+            @RequestBody UpdateTicketRequest request) {
+        TicketResponse response = ticketService.updateTicket(ticketId, request.toCommand());
+        return ResponseEntity.ok(response);
     }
 }

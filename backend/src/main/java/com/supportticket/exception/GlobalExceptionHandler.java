@@ -4,6 +4,7 @@ import java.time.OffsetDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.supportticket.domain.TicketPriority;
 import com.supportticket.dto.ApiErrorResponse;
@@ -111,6 +112,10 @@ public class GlobalExceptionHandler {
     }
 
     private String resolveUnreadableMessage(HttpMessageNotReadableException exception) {
+        if (exception.getMessage() != null && exception.getMessage().contains("Unrecognized field")) {
+            return "Request contains unsupported fields.";
+        }
+
         Throwable cause = exception.getCause();
         if (cause instanceof InvalidFormatException invalidFormatException
                 && invalidFormatException.getTargetType() != null
@@ -118,8 +123,9 @@ public class GlobalExceptionHandler {
             return "Priority must be one of LOW, MEDIUM, HIGH, CRITICAL";
         }
 
-        if (exception.getMessage() != null && exception.getMessage().contains("Unrecognized field")) {
-            return "Request contains unsupported fields.";
+        if (cause instanceof JsonMappingException jsonMappingException
+                && jsonMappingException.getOriginalMessage() != null) {
+            return jsonMappingException.getOriginalMessage();
         }
 
         return "Request validation failed.";
