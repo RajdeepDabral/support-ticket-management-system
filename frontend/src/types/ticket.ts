@@ -20,10 +20,24 @@ export interface Ticket {
   updatedAt: string;
 }
 
+export interface CreateTicketRequest {
+  title: string;
+  description: string;
+  priority: TicketPriority;
+  assignee: string;
+}
+
 export interface ListTicketsParams {
   keyword?: string;
   status?: TicketStatus;
 }
+
+export const TICKET_PRIORITY_OPTIONS: TicketPriority[] = [
+  'LOW',
+  'MEDIUM',
+  'HIGH',
+  'CRITICAL',
+];
 
 export const TICKET_STATUS_OPTIONS: TicketStatus[] = [
   'OPEN',

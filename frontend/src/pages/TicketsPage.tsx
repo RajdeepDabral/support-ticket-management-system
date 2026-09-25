@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { listTickets } from '../api/tickets';
 import { TicketFilters } from '../components/TicketFilters';
 import { TicketList } from '../components/TicketList';
@@ -69,7 +70,10 @@ export function TicketsPage() {
 
   return (
     <section className="tickets-page">
-      <h2>Tickets</h2>
+      <div className="tickets-page-header">
+        <h2>Tickets</h2>
+        <Link to="/tickets/new" className="button-link">Create Ticket</Link>
+      </div>
 
       <TicketFilters
         searchInput={searchInput}

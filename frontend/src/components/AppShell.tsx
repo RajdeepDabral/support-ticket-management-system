@@ -7,7 +7,7 @@ export function AppShell() {
         <h1>Support Ticket Management</h1>
         <nav className="app-nav" aria-label="Main navigation">
           <Link to="/tickets" className="nav-item">Tickets</Link>
-          <span className="nav-item nav-item--placeholder">Create Ticket</span>
+          <Link to="/tickets/new" className="nav-item">Create Ticket</Link>
         </nav>
       </header>
       <main className="app-main">

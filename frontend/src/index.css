@@ -158,3 +158,106 @@ body {
 .ticket-details-placeholder h2 {
   margin-top: 0;
 }
+
+.tickets-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tickets-page-header h2 {
+  margin: 0;
+}
+
+.create-ticket-page h2 {
+  margin-top: 0;
+}
+
+.create-ticket-form {
+  max-width: 36rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #c8c8d0;
+  border-radius: 0.35rem;
+  font: inherit;
+}
+
+.form-field textarea {
+  resize: vertical;
+}
+
+.required-indicator {
+  color: #6b6b73;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+
+.field-error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.9rem;
+}
+
+.create-ticket-form-error {
+  padding: 0.75rem 1rem;
+  border: 1px solid #f0c2c2;
+  border-radius: 0.5rem;
+  background: #fff7f7;
+}
+
+.create-ticket-form-error p {
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.form-actions button {
+  padding: 0.5rem 0.85rem;
+  border: 1px solid #1a4fd6;
+  border-radius: 0.35rem;
+  background: #1a4fd6;
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button-link {
+  display: inline-block;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid #c8c8d0;
+  border-radius: 0.35rem;
+  background: #ffffff;
+  color: #1a1a1a;
+  text-decoration: none;
+  font: inherit;
+}
+
+.button-link:hover {
+  background: #f3f3f6;
+}

@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import type { ListTicketsParams, Ticket } from '../types/ticket';
+import type { CreateTicketRequest, ListTicketsParams, Ticket } from '../types/ticket';
 
 function buildListTicketsPath(params?: ListTicketsParams): string {
   const searchParams = new URLSearchParams();
@@ -21,4 +21,8 @@ function buildListTicketsPath(params?: ListTicketsParams): string {
 
 export function listTickets(params?: ListTicketsParams): Promise<Ticket[]> {
   return apiClient.get<Ticket[]>(buildListTicketsPath(params));
+}
+
+export function createTicket(request: CreateTicketRequest): Promise<Ticket> {
+  return apiClient.post<Ticket>('/tickets', request);
 }
