@@ -17,6 +17,8 @@ target/
 *.war
 *.ear
 .mvn/wrapper/maven-wrapper.jar
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
 
 # Node / Frontend
 node_modules/

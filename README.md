@@ -4,9 +4,11 @@ Specification-driven development project for AI-powered support ticket managemen
 
 ## Current Phase
 
-The project has completed the **specification and AI-guidance phase**. Backend implementation, frontend implementation, automated tests, and Docker setup have **not** started yet.
+The project has completed the **specification and AI-guidance phase**, and **Phase 1 — Backend Project Bootstrap**.
 
-Next step per `spec/implementation-plan.md`: **Phase 1 — Backend Project Bootstrap**.
+Backend business functionality, frontend implementation, and full Docker-based end-to-end verification are **not** started yet.
+
+Next step per `spec/implementation-plan.md`: **Phase 2 — Database and Persistence**.
 
 ## SDD Workflow Status
 
@@ -15,8 +17,8 @@ Next step per `spec/implementation-plan.md`: **Phase 1 — Backend Project Boots
 | Requirement | Complete — `spec/requirements.md` |
 | Specification | Complete — `spec/architecture.md`, `data-model.md`, `api-contract.md`, `state-machine.md`, `ui-flow.md`, `test-strategy.md` |
 | Plan / Tasks | Complete — `spec/implementation-plan.md` |
-| Implementation | Not started |
-| Testing | Not started |
+| Implementation | In progress — backend bootstrap complete |
+| Testing | In progress — bootstrap tests added (require Docker) |
 | Review | Not started |
 | Fix | Not started |
 
@@ -34,7 +36,7 @@ support-ticket-management-ai-sdd/
 ├── docs/                 # Prompt history and review documentation
 ├── .specstory/history/   # AI session history (Specstory)
 ├── .cursor/              # Cursor IDE pointer to project AI guidance
-├── backend/              # Scaffold only — implementation not started
+├── backend/              # Spring Boot bootstrap (Phase 1 complete)
 └── frontend/             # Scaffold only — implementation not started
 ```
 
@@ -66,4 +68,4 @@ support-ticket-management-ai-sdd/
 - **Backend:** Java 21, Spring Boot, PostgreSQL
 - **Frontend:** React / Next.js or equivalent
 - **API:** REST
-- **Containerization:** Docker Compose (not yet configured)
+- **Containerization:** Docker Compose (`docker-compose.yml` — PostgreSQL + backend)
